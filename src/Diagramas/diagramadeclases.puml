@@ -1,0 +1,88 @@
+@startuml
+
+class Usuario {
+    - idUsuario : int
+    - nombre : String
+    - correo : String
+    - contraseña : String
+    - rol : String
+    + iniciarSesion()
+    + registrarUsuario()
+    + actualizarUsuario()
+}
+
+class Empresa {
+    - idEmpresa : int
+    - nombre : String
+    - direccion : String
+    - telefono : String
+    - correo : String
+    + registrarEmpresa()
+    + actualizarPerfil()
+}
+
+class Maquinaria {
+    - idMaquinaria : int
+    - nombre : String
+    - marca : String
+    - modelo : String
+    - año : int
+    - numeroSerie : String
+    - estado : String
+    + registrarMaquinaria()
+    + actualizarDatos()
+}
+
+class TipoMantenimiento {
+    - idTipo : int
+    - nombre : String
+    - descripcion : String
+    + registrarTipo()
+    + actualizarTipo()
+}
+
+class Mantenimiento {
+    - idMantenimiento : int
+    - fechaProgramada : Date
+    - fechaVencimiento : Date
+    - descripcion : String
+    - estado : String
+    + programarMantenimiento()
+    + actualizarMantenimiento()
+}
+
+class Alerta {
+    - idAlerta : int
+    - mensaje : String
+    - fecha : Date
+    - estado : String
+    + generarAlerta()
+    + consultarAlerta()
+}
+
+class Incidencia {
+    - idIncidencia : int
+    - fecha : Date
+    - descripcion : String
+    - gravedad : String
+    - estado : String
+    + registrarIncidencia()
+    + actualizarIncidencia()
+}
+
+' Relaciones
+
+Empresa "1" -- "0..*" Usuario : tiene
+Empresa "1" -- "0..*" Maquinaria : posee
+
+Maquinaria "1" -- "0..*" Mantenimiento : recibe
+TipoMantenimiento "1" -- "0..*" Mantenimiento : clasifica
+
+Mantenimiento "1" -- "0..*" Alerta : genera
+
+Maquinaria "1" -- "0..*" Incidencia : presenta
+
+Usuario "1" -- "0..*" Mantenimiento : programa
+Usuario "1" -- "0..*" Incidencia : registra
+
+@enduml

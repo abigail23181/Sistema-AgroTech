@@ -1,0 +1,93 @@
+@startuml
+
+title Diagrama Entidad-Relación - Sistema de Mantenimiento de Maquinaria
+
+entity USUARIO {
+    * id_usuario : INT <<PK>>
+    --
+    nombre : VARCHAR
+    correo : VARCHAR
+    contrasena : VARCHAR
+    rol : VARCHAR
+    id_empresa : INT <<FK>>
+}
+
+entity EMPRESA {
+    * id_empresa : INT <<PK>>
+    --
+    nombre : VARCHAR
+    direccion : VARCHAR
+    telefono : VARCHAR
+    correo : VARCHAR
+}
+
+entity MAQUINARIA {
+    * id_maquinaria : INT <<PK>>
+    --
+    nombre : VARCHAR
+    marca : VARCHAR
+    modelo : VARCHAR
+    anio : INT
+    numero_serie : VARCHAR
+    estado : VARCHAR
+    id_empresa : INT <<FK>>
+}
+
+entity TIPO_MANTENIMIENTO {
+    * id_tipo_mantenimiento : INT <<PK>>
+    --
+    nombre : VARCHAR
+    descripcion : VARCHAR
+}
+
+entity MANTENIMIENTO {
+    * id_mantenimiento : INT <<PK>>
+    --
+    fecha_programada : DATE
+    fecha_vencimiento : DATE
+    descripcion : VARCHAR
+    estado : VARCHAR
+    id_maquinaria : INT <<FK>>
+    id_tipo_mantenimiento : INT <<FK>>
+    id_usuario : INT <<FK>>
+}
+
+entity ALERTA {
+    * id_alerta : INT <<PK>>
+    --
+    mensaje : VARCHAR
+    fecha : DATE
+    estado : VARCHAR
+    id_mantenimiento : INT <<FK>>
+}
+
+entity INCIDENCIA {
+    * id_incidencia : INT <<PK>>
+    --
+    fecha : DATE
+    descripcion : VARCHAR
+    gravedad : VARCHAR
+    estado : VARCHAR
+    id_maquinaria : INT <<FK>>
+    id_usuario : INT <<FK>>
+}
+
+' Relaciones
+
+EMPRESA ||--o{ USUARIO : "tiene"
+
+EMPRESA ||--o{ MAQUINARIA : "posee"
+
+MAQUINARIA ||--o{ MANTENIMIENTO : "recibe"
+
+TIPO_MANTENIMIENTO ||--o{ MANTENIMIENTO : "clasifica"
+
+USUARIO ||--o{ MANTENIMIENTO : "programa"
+
+MANTENIMIENTO ||--o{ ALERTA : "genera"
+
+MAQUINARIA ||--o{ INCIDENCIA : "presenta"
+
+USUARIO ||--o{ INCIDENCIA : "registra"
+
+@enduml
