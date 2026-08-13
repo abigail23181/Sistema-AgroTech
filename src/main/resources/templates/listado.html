@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Maquinarias</title>
+</head>
+
+<body>
+
+<h1>Lista de Maquinarias</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Año</th>
+        <th>Número de Serie</th>
+        <th>Estado</th>
+        <th>ID Empresa</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="maquinaria : ${maquinarias}">
+        <td th:text="${maquinaria.idMaquinaria}"></td>
+        <td th:text="${maquinaria.nombre}"></td>
+        <td th:text="${maquinaria.marca}"></td>
+        <td th:text="${maquinaria.modelo}"></td>
+        <td th:text="${maquinaria.anio}"></td>
+        <td th:text="${maquinaria.numeroSerie}"></td>
+        <td th:text="${maquinaria.estado}"></td>
+        <td th:text="${maquinaria.idEmpresa}"></td>
+    </tr>
+    </tbody>
+
+</table>
+
+</body>
+</html>
