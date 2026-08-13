@@ -1,7 +1,6 @@
-package Grupo4.Sistema.AgroTech.controller;
+package Grupo4.Sistema.AgroTech.Controladores;
 
-import Grupo4.Sistema.AgroTech.model.Maquinaria;
-import Grupo4.Sistema.AgroTech.service.MaquinariaService;
+import Grupo4.Sistema.AgroTech.Servicios.Implementaciones.MaquinariaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

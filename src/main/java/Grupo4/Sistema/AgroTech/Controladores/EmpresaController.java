@@ -1,7 +1,7 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
 import Grupo4.Sistema.AgroTech.Model.Empresa;
-import Grupo4.Sistema.AgroTech.Servicio.Interfaces.IEmpresaService;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IEmpresaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

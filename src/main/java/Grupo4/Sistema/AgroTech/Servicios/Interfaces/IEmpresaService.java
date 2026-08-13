@@ -1,4 +1,4 @@
-package Grupo4.Sistema.AgroTech.Servicio.Interfaces;
+package Grupo4.Sistema.AgroTech.Servicios.Interfaces;
 
 import Grupo4.Sistema.AgroTech.Model.Empresa;
 import java.util.List;
@@ -11,4 +11,5 @@ public interface IEmpresaService {
     void cambiarEstado(Long id, Boolean estado);
     boolean existeCorreo(String correo, Long idExcluir);
     boolean existeRuc(String ruc, Long idExcluir);
+
 }

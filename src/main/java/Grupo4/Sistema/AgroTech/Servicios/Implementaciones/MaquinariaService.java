@@ -1,7 +1,7 @@
-package Grupo4.Sistema.AgroTech.service;
+package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 
 import Grupo4.Sistema.AgroTech.model.Maquinaria;
-import Grupo4.Sistema.AgroTech.repository.MaquinariaRepository;
+import Grupo4.Sistema.AgroTech.Repositorios.MaquinariaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
