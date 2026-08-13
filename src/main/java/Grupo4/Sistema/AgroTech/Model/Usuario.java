@@ -4,41 +4,30 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Table;
+
 
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre de usuario es obligatorio")
-    private String nombreUsuario;
-    @NotBlank(message = "El correo electrónico es obligatorio")
-    @Email(message = "El correo electrónico no es válido")
-    private String correo;
-
-    @NotBlank(message = "La contraseña es obligatoria")
-    private String contraseña;
-
-    @NotBlank(message = "El rol es obligatorio")
+    private String nombre;
+    private String email;
+    private String password;
     private String rol;
-
-    private Boolean activo;
 
     public Usuario() {
     }
 
-    public Usuario(Long id, String nombreUsuario, String correo,
-                   String contraseña, String rol, Boolean activo) {
-        this.id = id;
-        this.nombreUsuario = nombreUsuario;
-        this.correo = correo;
-        this.contraseña = contraseña;
+    public Usuario(String nombre, String email, String password, String rol) {
+        this.nombre = nombre;
+        this.email = email;
+        this.password = password;
         this.rol = rol;
-        this.activo = activo;
     }
 
     public Long getId() {
@@ -49,28 +38,28 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getCorreo() {
-        return correo;
+    public String getEmail() {
+        return email;
     }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getPassword() {
+        return password;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getRol() {
@@ -79,13 +68,5 @@ public class Usuario {
 
     public void setRol(String rol) {
         this.rol = rol;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
     }
 }

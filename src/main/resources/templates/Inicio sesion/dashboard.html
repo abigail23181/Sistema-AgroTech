@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel AgroTech</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .btn-logout { background-color: #dc3545; color: white; text-decoration: none; padding: 8px 15px; border-radius: 4px; font-size: 14px; }
+        .info-card { background-color: #e8f5e9; padding: 15px; border-radius: 6px; margin-top: 20px; border-left: 4px solid #2e7d32; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Bienvenido a AgroTech</h2>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+
+    <div class="info-card">
+        <h3>Usuario Autenticado:</h3>
+        <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">Usuario</span></p>
+        <p><strong>Correo:</strong> <span th:text="${usuario.email}">correo@ejemplo.com</span></p>
+        <p><strong>Rol:</strong> <span th:text="${usuario.rol}">Rol</span></p>
+    </div>
+</div>
+
+</body>
+</html>
