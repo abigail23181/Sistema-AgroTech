@@ -19,12 +19,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public Optional<Usuario> login(String email, String password) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+    public Optional<Usuario> login(String email, String contraseña) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(email);
 
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
-            if (usuario.getPassword().equals(password)) {
+            if (usuario.getContraseña().equals(contraseña)) {
                 return Optional.of(usuario);
             }
         }

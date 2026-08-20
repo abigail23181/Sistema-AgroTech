@@ -8,85 +8,56 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/empresas")
 public class EmpresaController {
 
-    @Autowired
-    private IEmpresaService empresaService;
+    private final IEmpresaService empresaService;
 
-    private boolean esAdministrador(String rolActual) {
-        return "ADMIN".equalsIgnoreCase(rolActual);
+    @Autowired
+    public EmpresaController(IEmpresaService empresaService) {
+        this.empresaService = empresaService;
     }
 
     @GetMapping
-    public String listarEmpresas(@RequestParam(value = "rolSesion", defaultValue = "ADMIN") String rolSesion,
-                                 Model model) {
-        if (!esAdministrador(rolSesion)) {
-            return "redirect:/empresas/error-403";
-        }
-        model.addAttribute("empresas", empresaService.listarTodas());
+    public String listarEmpresas(Model model) {
+        model.addAttribute("empresas", empresaService.obtenerTodas());
+        return "empresas/index";
+    }
+
+    @GetMapping("/nuevo")
+    public String formularioCrear(Model model) {
         model.addAttribute("empresa", new Empresa());
-        return "empresas";
+        return "empresas/form";
     }
 
     @PostMapping("/guardar")
-    public String guardarEmpresa(@Valid @ModelAttribute("empresa") Empresa empresa,
-                                 BindingResult result,
-                                 @RequestParam(value = "rolSesion", defaultValue = "ADMIN") String rolSesion,
-                                 Model model,
-                                 RedirectAttributes redirect) {
-
-        if (!esAdministrador(rolSesion)) {
-            return "redirect:/empresas/error-403";
-        }
-
-        if (empresaService.existeCorreo(empresa.getCorreo(), empresa.getId())) {
-            result.rejectValue("correo", "error.empresa", "Este correo ya se encuentra registrado.");
-        }
-        if (empresaService.existeRuc(empresa.getRuc(), empresa.getId())) {
-            result.rejectValue("ruc", "error.empresa", "Este RUC/NIT ya se encuentra registrado.");
-        }
-
+    public String guardarEmpresa(@Valid @ModelAttribute("empresa") Empresa empresa, 
+                                 BindingResult result, 
+                                 Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("empresas", empresaService.listarTodas());
-            return "empresas";
+            return "empresas/form";
         }
-
-        try {
-            if (empresa.getId() == null) {
-                empresaService.guardar(empresa);
-                redirect.addFlashAttribute("mensajeExito", "Empresa registrada con éxito.");
-            } else {
-                empresaService.actualizar(empresa.getId(), empresa);
-                redirect.addFlashAttribute("mensajeExito", "Empresa actualizada con éxito.");
-            }
-        } catch (Exception e) {
-            redirect.addFlashAttribute("mensajeError", e.getMessage());
-        }
-
+        empresaService.guardar(empresa);
         return "redirect:/empresas";
     }
 
-    @PostMapping("/cambiar-estado/{id}")
-    public String cambiarEstado(@PathVariable Long id,
-                                @RequestParam Boolean estado,
-                                @RequestParam(value = "rolSesion", defaultValue = "ADMIN") String rolSesion,
-                                RedirectAttributes redirect) {
-
-        if (!esAdministrador(rolSesion)) {
-            return "redirect:/empresas/error-403";
+    @GetMapping("/editar/{id}")
+    public String formularioEditar(@PathVariable("id") Long id, Model model) {
+        Optional<Empresa> empresa = empresaService.obtenerPorId(id);
+        if (empresa.isPresent()) {
+            model.addAttribute("empresa", empresa.get());
+            return "empresas/form";
         }
-
-        empresaService.cambiarEstado(id, estado);
-        redirect.addFlashAttribute("mensajeExito", "Estado de la empresa actualizado correctamente.");
         return "redirect:/empresas";
     }
 
-    @GetMapping("/error-403")
-    public String error403() {
-        return "error/403";
+    @GetMapping("/eliminar/{id}")
+    public String eliminarEmpresa(@PathVariable("id") Long id) {
+        empresaService.eliminar(id);
+        return "redirect:/empresas";
     }
 }
