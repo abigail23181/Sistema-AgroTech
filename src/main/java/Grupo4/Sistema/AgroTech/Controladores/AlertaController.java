@@ -1,6 +1,7 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
 import Grupo4.Sistema.AgroTech.Model.Alerta;
+import Grupo4.Sistema.AgroTech.Repositorios.MaquinariaRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IAlertaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,9 @@ public class AlertaController {
     @Autowired
     private IAlertaService alertaService;
 
+    @Autowired
+    private MaquinariaRepository maquinariaRepository; // <-- 1. Inyectar el repositorio
+
     @GetMapping
     public String listarAlertas(@RequestParam(required = false) String tipo,
                                 @RequestParam(required = false) String ubicacion,
@@ -27,6 +31,7 @@ public class AlertaController {
         List<Alerta> alertas = alertaService.obtenerAlertas(tipo, ubicacion, maquinariaId);
 
         model.addAttribute("alertas", alertas);
+        model.addAttribute("maquinarias", maquinariaRepository.findAll()); // <-- 2. Pasar las maquinarias a la vista
         model.addAttribute("tipoFiltro", tipo);
         model.addAttribute("ubicacionFiltro", ubicacion);
         model.addAttribute("maquinariaFiltro", maquinariaId);
