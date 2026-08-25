@@ -9,4 +9,5 @@ import java.util.List;
 public interface TipoMantenimientoRepository extends JpaRepository<TipoMantenimiento, Long> {
     boolean existsByNombreIgnoreCase(String nombre);
     List<TipoMantenimiento> findByActivoTrue();
+
 }
