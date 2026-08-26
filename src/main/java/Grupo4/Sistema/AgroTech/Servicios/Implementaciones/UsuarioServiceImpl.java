@@ -3,6 +3,7 @@ package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 import Grupo4.Sistema.AgroTech.Model.Usuario;
 import Grupo4.Sistema.AgroTech.Repositorios.UsuarioRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IUsuarioService;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,5 +58,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public void eliminarPorId(Integer id) {
 
+    }
+
+    @Override
+    public @Nullable Object listarTodos() {
+        return null;
     }
 }

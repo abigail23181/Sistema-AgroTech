@@ -3,6 +3,7 @@ package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 import Grupo4.Sistema.AgroTech.Model.Alerta;
 import Grupo4.Sistema.AgroTech.Repositorios.AlertaRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IAlertaService;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,5 +48,10 @@ public class AlertaServiceImpl implements IAlertaService {
     @Override
     public void eliminar(Long id) {
 
+    }
+
+    @Override
+    public @Nullable Object listarTodas() {
+        return null;
     }
 }

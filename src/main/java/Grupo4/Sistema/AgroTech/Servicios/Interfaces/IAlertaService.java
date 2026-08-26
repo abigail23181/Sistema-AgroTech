@@ -1,6 +1,8 @@
 package Grupo4.Sistema.AgroTech.Servicios.Interfaces;
 
 import Grupo4.Sistema.AgroTech.Model.Alerta;
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,4 +14,6 @@ public interface IAlertaService {
     Optional<Alerta> obtenerPorId(Long id);
     Alerta guardar(Alerta alerta);
     void eliminar(Long id);
+
+    @Nullable Object listarTodas();
 }

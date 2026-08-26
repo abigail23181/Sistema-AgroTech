@@ -16,4 +16,6 @@ public interface IIncidenciaService {
     Incidencia guardar(Incidencia incidencia);
 
     void eliminarPorId(Integer id);
+
+    void eliminar(Long id);
 }

@@ -4,111 +4,95 @@
       layout:decorate="~{layouts/_mainLayout}">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Principal</title>
+    <title>Panel Principal - AgroTech</title>
 </head>
 <body>
 
 <div layout:fragment="content">
 
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="fw-bold text-primary">🌱 Panel de Control General</h2>
-            <p class="text-muted">Vista unificada de todos los módulos del sistema AgroTech.</p>
+    <!-- Encabezado Principal -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-success m-0"><i class="bi bi-tree-fill me-2"></i>BIENVENIDOS A NUESTRO SISTEMA-AGROTECH</h2>
+        </div>
+        <button class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="location.reload();">
+        </button>
+    </div>
+
+    <!-- TARJETAS DE MÉTRICAS (KPIs) CON RUTAS CORREGIDAS -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <a th:href="@{/empresas}" class="text-decoration-none">
+                <div class="card card-custom border-0 shadow-sm bg-white p-3 border-start border-primary border-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Empresas</h6>
+                            <h3 class="fw-bold text-dark mb-0" th:text="${empresas != null ? empresas.size() : 0}">0</h3>
+                        </div>
+                        <div class="rounded-3 bg-primary bg-opacity-10 p-3 text-primary">
+                            <i class="bi bi-building fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-4">
+            <a th:href="@{/maquinaria}" class="text-decoration-none">
+                <div class="card card-custom border-0 shadow-sm bg-white p-3 border-start border-warning border-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Maquinarias</h6>
+                            <h3 class="fw-bold text-dark mb-0" th:text="${maquinarias != null ? maquinarias.size() : 0}">0</h3>
+                        </div>
+                        <div class="rounded-3 bg-warning bg-opacity-10 p-3 text-warning">
+                            <i class="bi bi-truck fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-4">
+            <a th:href="@{/alertas}" class="text-decoration-none">
+                <div class="card card-custom border-0 shadow-sm bg-white p-3 border-start border-danger border-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Alertas Activas</h6>
+                            <h3 class="fw-bold text-dark mb-0" th:text="${alertas != null ? alertas.size() : 0}">0</h3>
+                        </div>
+                        <div class="rounded-3 bg-danger bg-opacity-10 p-3 text-danger">
+                            <i class="bi bi-bell fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 
-    <!-- SECCIÓN 1: EMPRESAS -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">🏢 Gestión de Empresas</h5>
-            <a th:href="@{/empresas}" class="btn btn-sm btn-outline-light">Ver módulo completo</a>
+    <!-- ACCIONES RÁPIDAS PARA OTROS MÓDULOS -->
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card card-custom shadow-sm p-4 text-center bg-white">
+                <i class="bi bi-bell text-danger fs-1 mb-2"></i>
+                <h6 class="fw-bold">Alertas del Sistema</h6>
+                <p class="text-muted small">Notificaciones y alertas programadas.</p>
+                <a th:href="@{/alertas}" class="btn btn-outline-danger btn-sm rounded-pill mt-1">Abrir Alertas</a>
+            </div>
         </div>
-        <div class="card-body">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="empresa : ${empresas}">
-                    <td th:text="${empresa.idEmpresa}">1</td>
-                    <td th:text="${empresa.nombre}">Agro Corp</td>
-                    <td th:text="${empresa.direccion}">Av. Principal 123</td>
-                    <td th:text="${empresa.telefono}">+503 7000-0000</td>
-                    <td th:text="${empresa.correo}">contacto@agro.com</td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(empresas)}">
-                    <td colspan="5" class="text-center text-muted">No hay empresas registradas.</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="col-md-4">
+            <div class="card card-custom shadow-sm p-4 text-center bg-white">
+                <i class="bi bi-exclamation-triangle text-warning fs-1 mb-2"></i>
+                <h6 class="fw-bold">Incidencias</h6>
+                <p class="text-muted small">Historial de reportes y fallas.</p>
+                <a th:href="@{/incidencia/historial}" class="btn btn-outline-warning btn-sm rounded-pill mt-1">Ver Historial</a>
+            </div>
         </div>
-    </div>
-
-    <!-- SECCIÓN 2: MAQUINARIAS -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">🚜 Gestión de Maquinarias</h5>
-            <a th:href="@{/maquinarias}" class="btn btn-sm btn-outline-light">Ver módulo completo</a>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre / Modelo</th>
-                    <th>Estado</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="maquina : ${maquinarias}">
-                    <td th:text="${maquina.id}">1</td>
-                    <td th:text="${maquina.nombre}">Tractor John Deere</td>
-                    <td th:text="${maquina.estado}">Activo</td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(maquinarias)}">
-                    <td colspan="3" class="text-center text-muted">No hay maquinarias registradas.</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 3: USUARIOS -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">👤 Gestión de Usuarios</h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                <tr>
-                    <th>Usuario</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="usr : ${usuarios}">
-                    <td th:text="${usr.nombreUsuario}">admin</td>
-                    <td th:text="${usr.correo}">admin@agrotech.com</td>
-                    <td th:text="${usr.rol}">ADMIN</td>
-                    <td>
-                        <span class="badge bg-success" th:if="${usr.activo}">Activo</span>
-                        <span class="badge bg-danger" th:unless="${usr.activo}">Inactivo</span>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(usuarios)}">
-                    <td colspan="4" class="text-center text-muted">No hay usuarios registrados.</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="col-md-4">
+            <div class="card card-custom shadow-sm p-4 text-center bg-white">
+                <i class="bi bi-tools text-info fs-1 mb-2"></i>
+                <h6 class="fw-bold">Tipos de Mantenimiento</h6>
+                <p class="text-muted small">Ajuste de parámetros y categorías.</p>
+                <a th:href="@{/tipomantenimiento}" class="btn btn-outline-info btn-sm rounded-pill mt-1">Configurar</a>
+            </div>
         </div>
     </div>
 

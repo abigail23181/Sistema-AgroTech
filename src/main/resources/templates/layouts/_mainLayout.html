@@ -4,59 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title layout:title-pattern="$CONTENT_TITLE - AgroTech">Sistema AgroTech</title>
-
+    <title>Sistema AgroTech</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- CSS Personalizado -->
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .sidebar { min-height: 100vh; background: #1b2a47; color: #fff; }
+        .sidebar .nav-link { color: #aeb9cc; border-radius: 8px; margin-bottom: 4px; padding: 10px 15px; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #2d4065; color: #fff; }
+        .card-custom { border: none; border-radius: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-custom:hover { box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important; }
+        .avatar-initial { width: 35px; height: 35px; border-radius: 50%; background-color: #e9ecef; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: #495057; }
+    </style>
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body>
 
-<!-- Barra de Navegación -->
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-success fs-4" th:href="@{/home}">🌱 AgroTech</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold" th:href="@{/home}">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold" th:href="@{/empresas}">Empresas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold" th:href="@{/maquinarias}">Maquinarias</a>
-                    </li>
-                </ul>
-                <div class="d-flex">
-                    <a th:href="@{/login}" class="btn btn-outline-danger btn-sm px-3">Cerrar Sesión</a>
-                </div>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar lateral con enlaces a todas tus vistas -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
+            <div class="d-flex align-items-center mb-4 px-2">
+                <i class="bi bi-tree-fill text-success fs-3 me-2"></i>
+                <span class="fs-4 fw-bold text-white">AgroTech</span>
             </div>
-        </div>
-    </nav>
-</header>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/empresas}"><i class="bi bi-building me-2"></i> Empresas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/maquinaria}"><i class="bi bi-truck me-2"></i> Maquinarias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/alertas}"><i class="bi bi-bell me-2"></i> Alertas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/incidencia/historial}"><i class="bi bi-exclamation-triangle me-2"></i> Incidencias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tipomantenimiento}"><i class="bi bi-tools me-2"></i> Mantenimientos</a>
+                </li>
+            </ul>
+        </nav>
 
-<!-- Contenido Dinámico Principal -->
-<main class="container my-4 flex-grow-1">
-    <div layout:fragment="content">
-        <!-- Aquí se inyecta el panel unificado de tu vista -->
+        <!-- Contenido dinámico -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div layout:fragment="content"></div>
+        </main>
     </div>
-</main>
+</div>
 
-<!-- Pie de Página -->
-<footer class="bg-dark text-white text-center py-3 mt-auto">
-    <div class="container">
-        <p class="mb-0 text-secondary small">&copy; 2026 Grupo 4 - Sistema AgroTech. Todos los derechos reservados.</p>
-    </div>
-</footer>
-
-<!-- Bootstrap 5 JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

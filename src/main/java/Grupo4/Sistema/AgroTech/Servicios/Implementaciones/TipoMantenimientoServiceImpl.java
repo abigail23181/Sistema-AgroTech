@@ -38,4 +38,9 @@ public class TipoMantenimientoServiceImpl implements ITipoMantenimientoService {
         tipo.setActivo(estado);
         return repository.save(tipo);
     }
+
+    @Override
+    public void eliminar(Long id) {
+
+    }
 }

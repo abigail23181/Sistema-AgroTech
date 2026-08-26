@@ -24,6 +24,7 @@ public class Alerta {
 
     public Alerta(Maquinaria maquinaria, String ubicacion, String tipo, LocalDate fechaLimite, String estado) {
         this.maquinaria = maquinaria;
+        String ubicación = new String();
         this.ubicacion = ubicación;
         this.tipo = tipo;
         this.fechaLimite = fechaLimite;

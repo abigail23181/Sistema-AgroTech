@@ -38,4 +38,9 @@ public class IncidenciaServiceImpl implements IIncidenciaService {
     public void eliminarPorId(Integer id) {
 
     }
+
+    @Override
+    public void eliminar(Long id) {
+
+    }
 }

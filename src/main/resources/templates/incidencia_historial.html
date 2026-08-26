@@ -47,7 +47,7 @@
             height: 300px;
             background: rgba(37, 99, 235, 0.15);
             border-radius: 50%;
-            blur: 40px;
+            filter: blur(40px);
             pointer-events: none;
         }
 
@@ -78,7 +78,7 @@
             border-bottom: none;
         }
         .table tbody tr {
-            transition: background-color 0.2s ease, transform 0.1s ease;
+            transition: background-color 0.2s ease;
         }
         .table tbody tr:hover {
             background-color: #f1f5f9;
@@ -105,6 +105,7 @@
         .badge-baja { background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; }
 
         .badge-resuelto { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .badge-en-proceso { background-color: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
         .badge-pendiente { background-color: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
 
         /* Botones de Acción */
@@ -118,15 +119,6 @@
             border-radius: 8px;
             transition: all 0.2s ease;
             border: 1px solid transparent;
-        }
-        .btn-action-view {
-            background-color: #f0f9ff;
-            color: #0284c7;
-            border-color: #bae6fd;
-        }
-        .btn-action-view:hover {
-            background-color: #0284c7;
-            color: #fff;
         }
         .btn-action-edit {
             background-color: #fefce8;
@@ -178,10 +170,13 @@
             <p class="text-white-50 mb-0 small">Gestión y seguimiento de averías reportadas en la flota</p>
         </div>
         <div>
-            <a th:href="@{/incidencias/nueva}" class="btn btn-custom-primary text-white d-inline-flex align-items-center gap-2">
+            <!-- Botón para abrir el Modal Crear -->
+            <button class="btn btn-custom-primary text-white d-inline-flex align-items-center gap-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalCrear">
                 <i class="fa-solid fa-plus"></i>
                 <span>Nueva Incidencia</span>
-            </a>
+            </button>
         </div>
     </div>
 
@@ -235,41 +230,111 @@
                         <!-- Estado -->
                         <td>
                             <span class="badge-soft"
-                                  th:classappend="${incidencia.estado == 'RESUELTO' ? 'badge-resuelto' : 'badge-pendiente'}">
-                                <i class="fa-solid" th:classappend="${incidencia.estado == 'RESUELTO' ? 'fa-circle-check' : 'fa-clock'}"></i>
-                                <span th:text="${incidencia.estado}">EN PROCESO</span>
+                                  th:classappend="${incidencia.estado == 'RESUELTO' ? 'badge-resuelto' : (incidencia.estado == 'EN_PROCESO' ? 'badge-en-proceso' : 'badge-pendiente')}">
+                                <i class="fa-solid" th:classappend="${incidencia.estado == 'RESUELTO' ? 'fa-circle-check' : (incidencia.estado == 'EN_PROCESO' ? 'fa-spinner' : 'fa-clock')}"></i>
+                                <span th:text="${incidencia.estado}">EN_PROCESO</span>
                             </span>
                         </td>
 
                         <!-- Botones de Acción -->
                         <td class="text-end pe-4">
                             <div class="d-inline-flex gap-1">
-                                <!-- Detalle -->
-                                <a th:href="@{/incidencias/detalle/{id}(id=${incidencia.id})}"
-                                   class="btn btn-action btn-action-view"
-                                   data-bs-toggle="tooltip"
-                                   title="Ver Detalle">
-                                    <i class="fa-solid fa-eye fs-7"></i>
-                                </a>
-
-                                <!-- Editar -->
-                                <a th:href="@{/incidencias/editar/{id}(id=${incidencia.id})}"
-                                   class="btn btn-action btn-action-edit"
-                                   data-bs-toggle="tooltip"
-                                   title="Editar">
+                                <!-- Editar (Abre Modal Editar) -->
+                                <button type="button"
+                                        class="btn btn-action btn-action-edit"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#modalEditar-' + ${incidencia.id}"
+                                        title="Editar">
                                     <i class="fa-solid fa-pen-to-square fs-7"></i>
-                                </a>
+                                </button>
 
-                                <!-- Eliminar (Abre modal de confirmación) -->
+                                <!-- Eliminar (Abre Modal Eliminar) -->
                                 <button type="button"
                                         class="btn btn-action btn-action-delete"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal"
-                                        th:data-bs-id="${incidencia.id}"
+                                        th:data-bs-target="'#modalEliminar-' + ${incidencia.id}"
                                         title="Eliminar">
                                     <i class="fa-solid fa-trash-can fs-7"></i>
                                 </button>
                             </div>
+
+                            <!-- MODAL EDITAR -->
+                            <div class="modal fade text-start" th:id="'modalEditar-' + ${incidencia.id}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                                        <form th:action="@{/incidencias/editar}" method="post">
+                                            <div class="modal-header bg-primary text-white border-0 py-3">
+                                                <h5 class="modal-title fw-bold fs-6">
+                                                    <i class="fa-solid fa-pen-to-square me-2"></i>Editar Incidencia <span th:text="'#' + ${incidencia.id}"></span>
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <input type="hidden" name="id" th:value="${incidencia.id}">
+
+                                                <!-- Severidad -->
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold small text-secondary">Severidad</label>
+                                                    <select name="severidad" class="form-select" required>
+                                                        <option value="BAJA" th:selected="${incidencia.severidad == 'BAJA'}">Baja</option>
+                                                        <option value="MEDIA" th:selected="${incidencia.severidad == 'MEDIA'}">Media</option>
+                                                        <option value="ALTA" th:selected="${incidencia.severidad == 'ALTA'}">Alta</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Fecha -->
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold small text-secondary">Fecha</label>
+                                                    <input type="date" name="fecha" class="form-control" th:value="${incidencia.fecha}" required />
+                                                </div>
+
+                                                <!-- Ubicación -->
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold small text-secondary">Ubicación</label>
+                                                    <input type="text" name="ubicacion" class="form-control" th:value="${incidencia.ubicacion}" required />
+                                                </div>
+
+                                                <!-- Estado -->
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold small text-secondary">Estado</label>
+                                                    <select name="estado" class="form-select" required>
+                                                        <option value="PENDIENTE" th:selected="${incidencia.estado == 'PENDIENTE'}">Pendiente</option>
+                                                        <option value="EN_PROCESO" th:selected="${incidencia.estado == 'EN_PROCESO'}">En Proceso</option>
+                                                        <option value="RESUELTO" th:selected="${incidencia.estado == 'RESUELTO'}">Resuelto</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0 p-4 pt-0">
+                                                <button type="button" class="btn btn-light fw-semibold" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary fw-semibold px-4">Guardar Cambios</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MODAL ELIMINAR -->
+                            <div class="modal fade text-start" th:id="'modalEliminar-' + ${incidencia.id}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                                        <form th:action="@{/incidencias/eliminar}" method="post">
+                                            <input type="hidden" name="id" th:value="${incidencia.id}">
+                                            <div class="modal-body text-center p-4">
+                                                <div class="text-danger bg-danger bg-opacity-10 d-inline-flex p-3 rounded-circle mb-3">
+                                                    <i class="fa-solid fa-triangle-exclamation fs-3"></i>
+                                                </div>
+                                                <h5 class="fw-bold mb-2">¿Eliminar registro?</h5>
+                                                <p class="text-muted small mb-0">Esta acción no se puede deshacer.</p>
+                                            </div>
+                                            <div class="modal-footer border-0 justify-content-center p-4 pt-0">
+                                                <button type="button" class="btn btn-light w-50 fw-semibold" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-danger w-50 fw-semibold">Eliminar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
                         </td>
                     </tr>
 
@@ -292,45 +357,63 @@
     </div>
 </div>
 
-<!-- Modal de Confirmación para Eliminar -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+<!-- MODAL CREAR -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-            <div class="modal-body text-center p-4">
-                <div class="text-danger bg-danger bg-opacity-10 d-inline-flex p-3 rounded-circle mb-3">
-                    <i class="fa-solid fa-triangle-exclamation fs-3"></i>
+            <form th:action="@{/incidencias/guardar}" method="post">
+                <div class="modal-header bg-dark text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold fs-6">
+                        <i class="fa-solid fa-circle-plus me-2 text-info"></i>Registrar Nueva Incidencia
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <h5 class="fw-bold mb-2">¿Eliminar registro?</h5>
-                <p class="text-muted small mb-4">Esta acción no se puede deshacer.</p>
-                <form id="deleteForm" th:action="@{/incidencias/eliminar}" method="post">
-                    <input type="hidden" name="id" id="deleteIncidenciaId">
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-light w-50 fw-semibold" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger w-50 fw-semibold">Eliminar</button>
+                <div class="modal-body p-4">
+
+                    <!-- Severidad -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Severidad</label>
+                        <select name="severidad" class="form-select" required>
+                            <option value="" disabled selected>-- Seleccionar Severidad --</option>
+                            <option value="BAJA">Baja</option>
+                            <option value="MEDIA">Media</option>
+                            <option value="ALTA">Alta</option>
+                        </select>
                     </div>
-                </form>
-            </div>
+
+                    <!-- Fecha -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Fecha</label>
+                        <input type="date" name="fecha" class="form-control" required />
+                    </div>
+
+                    <!-- Ubicación -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Ubicación</label>
+                        <input type="text" name="ubicacion" class="form-control" placeholder="Ej: Lote 4 / Taller Principal" required />
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-secondary">Estado Inicial</label>
+                        <select name="estado" class="form-select" required>
+                            <option value="PENDIENTE" selected>Pendiente</option>
+                            <option value="EN_PROCESO">En Proceso</option>
+                            <option value="RESUELTO">Resuelto</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light fw-semibold" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary fw-semibold px-4">Guardar Incidencia</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap 5 JS Bundle (Requerido para Tooltips y Modales) -->
+<!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Inicializar Tooltips
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
-    // Pasar ID al Modal de Eliminación dinámicamente
-    const deleteModal = document.getElementById('deleteModal')
-    if (deleteModal) {
-        deleteModal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget
-            const id = button.getAttribute('th:data-bs-id') || button.getAttribute('data-bs-id')
-            const inputId = deleteModal.querySelector('#deleteIncidenciaId')
-            inputId.value = id
-        })
-    }
-</script>
 </body>
 </html>

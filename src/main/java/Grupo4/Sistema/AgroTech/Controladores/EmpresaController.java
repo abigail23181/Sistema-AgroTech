@@ -9,8 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @Controller
 @RequestMapping("/empresas")
 public class EmpresaController {
@@ -25,33 +23,18 @@ public class EmpresaController {
     @GetMapping
     public String listarEmpresas(Model model) {
         model.addAttribute("empresas", empresaService.obtenerTodas());
-        return "empresas/index";
-    }
-
-    @GetMapping("/nuevo")
-    public String formularioCrear(Model model) {
-        model.addAttribute("empresa", new Empresa());
-        return "empresas/form";
+        return "empresas";
     }
 
     @PostMapping("/guardar")
-    public String guardarEmpresa(@Valid @ModelAttribute("empresa") Empresa empresa, 
-                                 BindingResult result, 
+    public String guardarEmpresa(@Valid @ModelAttribute("empresa") Empresa empresa,
+                                 BindingResult result,
                                  Model model) {
         if (result.hasErrors()) {
-            return "empresas/form";
+            model.addAttribute("empresas", empresaService.obtenerTodas());
+            return "empresas";
         }
         empresaService.guardar(empresa);
-        return "redirect:/empresas";
-    }
-
-    @GetMapping("/editar/{id}")
-    public String formularioEditar(@PathVariable("id") Long id, Model model) {
-        Optional<Empresa> empresa = empresaService.obtenerPorId(id);
-        if (empresa.isPresent()) {
-            model.addAttribute("empresa", empresa.get());
-            return "empresas/form";
-        }
         return "redirect:/empresas";
     }
 

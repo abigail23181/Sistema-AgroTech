@@ -1,5 +1,6 @@
 package Grupo4.Sistema.AgroTech.Servicios.Interfaces;
 import Grupo4.Sistema.AgroTech.Model.Usuario;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +21,5 @@ public interface IUsuarioService {
 
  void eliminarPorId(Integer id);
 
+ @Nullable Object listarTodos();
 }

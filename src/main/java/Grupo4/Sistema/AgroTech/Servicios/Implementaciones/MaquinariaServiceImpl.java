@@ -38,4 +38,9 @@ public class MaquinariaServiceImpl implements IMaquinariaService {
     public void eliminar(Long id) {
         maquinariaRepository.deleteById(id);
     }
+
+    @Override
+    public Object listarTodas() {
+        return null;
+    }
 }

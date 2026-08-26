@@ -1,50 +1,41 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
-import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IIncidenciaService;
 import Grupo4.Sistema.AgroTech.Model.Incidencia;
-
-import jakarta.validation.Valid;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IIncidenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/incidencias")
+@RequestMapping({"/incidencias", "/incidencia"}) // Acepta plural y singular
 public class IncidenciaController {
 
     @Autowired
     private IIncidenciaService incidenciaService;
 
-    // 1. Mostrar historial de incidencias
-    @GetMapping("/historial")
+    // Acepta http://localhost:8080/incidencias y http://localhost:8080/incidencias/historial
+    @GetMapping({"", "/", "/historial"})
     public String listarIncidencias(Model model) {
         model.addAttribute("incidencias", incidenciaService.listarTodas());
-        return "incidencia_historial";
+        return "incidencia_historial"; // Verifica que el archivo se llame tal cual en templates/
     }
 
-    // 2. Mostrar formulario para nueva incidencia
-    @GetMapping("/nueva")
-    public String formularioNuevaIncidencia(Model model) {
-        model.addAttribute("incidencia", new Incidencia());
-        return "incidencia_form";
-    }
-
-    // 3. Procesar el formulario de guardado
     @PostMapping("/guardar")
-    public String guardarIncidencia(@Valid @ModelAttribute("incidencia") Incidencia incidencia,
-                                    BindingResult result,
-                                    Model model) {
-        // IMPORTANTE: BindingResult debe ir inmediatamente después del objeto con @Valid.
-        if (result.hasErrors()) {
-            return "incidencia_form";
-        }
-
+    public String guardarIncidencia(@ModelAttribute Incidencia incidencia) {
         incidenciaService.guardar(incidencia);
-        return "redirect:/incidencias/historial";
+        return "redirect:/incidencias";
+    }
+
+    @PostMapping("/editar")
+    public String editarIncidencia(@ModelAttribute Incidencia incidencia) {
+        incidenciaService.guardar(incidencia);
+        return "redirect:/incidencias";
+    }
+
+    @PostMapping("/eliminar")
+    public String eliminarIncidencia(@RequestParam("id") Long id) {
+        incidenciaService.eliminar(id);
+        return "redirect:/incidencias";
     }
 }
