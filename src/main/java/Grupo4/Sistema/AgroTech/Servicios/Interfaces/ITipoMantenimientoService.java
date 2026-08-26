@@ -2,7 +2,6 @@ package Grupo4.Sistema.AgroTech.Servicios.Interfaces;
 
 import Grupo4.Sistema.AgroTech.Model.TipoMantenimiento;
 import java.util.List;
-git
 
 public interface ITipoMantenimientoService {
 

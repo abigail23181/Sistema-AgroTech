@@ -10,5 +10,6 @@ public interface IMaquinariaService {
     Maquinaria guardar(Maquinaria maquinaria);
     void eliminar(Long id);
 
+
     Object listarTodas();
 }
