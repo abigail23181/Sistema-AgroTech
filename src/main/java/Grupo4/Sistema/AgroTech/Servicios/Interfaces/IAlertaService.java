@@ -16,4 +16,5 @@ public interface IAlertaService {
     void eliminar(Long id);
 
     @Nullable Object listarTodas();
+    
 }
