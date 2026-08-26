@@ -29,6 +29,7 @@ public class TipoMantenimientoServiceImpl implements ITipoMantenimientoService {
             throw new IllegalArgumentException("El nombre del tipo de mantenimiento ya existe.");
         }
         return repository.save(tipo);
+   
     }
 
     @Override
@@ -37,10 +38,12 @@ public class TipoMantenimientoServiceImpl implements ITipoMantenimientoService {
                 .orElseThrow(() -> new RuntimeException("Tipo de mantenimiento no encontrado"));
         tipo.setActivo(estado);
         return repository.save(tipo);
+   
     }
 
     @Override
     public void eliminar(Long id) {
+
 
     }
 }
