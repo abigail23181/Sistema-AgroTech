@@ -22,4 +22,5 @@ public interface IUsuarioService {
  void eliminarPorId(Integer id);
 
  @Nullable Object listarTodos();
+ 
 }
