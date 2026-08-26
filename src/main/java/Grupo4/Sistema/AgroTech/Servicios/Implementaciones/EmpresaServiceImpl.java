@@ -23,6 +23,7 @@ public class EmpresaServiceImpl implements IEmpresaService {
     @Override
     public List<Empresa> obtenerTodas() {
         return empresaRepository.findAll();
+
     }
 
     @Override
@@ -44,4 +45,5 @@ public class EmpresaServiceImpl implements IEmpresaService {
     public @Nullable Object listarTodas() {
         return null;
     }
+    
 }
