@@ -13,4 +13,5 @@ public interface IEmpresaService {
     void eliminar(Long id);
 
     @Nullable Object listarTodas();
+    
 }
