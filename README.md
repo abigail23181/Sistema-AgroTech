@@ -1,49 +1,106 @@
 ```mermaid
-classDiagram
-    class Usuario {
-        -Long id
-        -String nombreUsuario
-        -String correo
-        -String contrasena
-        -String rol
-        -Boolean activo
-    }
+@startuml
+title AgroTech - Diagrama de Clases
 
-    class Empresa {
-        -Long id
-        -String nombre
-        -String ruc
-        -String direccion
-        -String telefono
-        -String correo
-        -Integer estado
-    }
+class Usuario {
+    - idUsuario : int
+    - nombre : String
+    - correo : String
+    - contraseña : String
+    - rol : String
+    + login(email: String, password: String) : Optional<Usuario>
+    + obtenerTodosPaginados(pageable: Pageable) : Page<Usuario>
+    + obtenerTodos() : List<Usuario>
+    + obtenerPorId(id: Integer) : Usuario
+    + crearOeditar(usuario: Usuario) : Usuario
+    + eliminarPorId(id: Integer) : void
+}
 
-    class Maquinaria {
-        -Long idMaquinaria
-        -String nombre
-        -String marca
-        -String modelo
-        -Integer anio
-        -String numeroSerie
-        -String estado
-    }
+class Empresa {
+    - idEmpresa : int
+    - nombre : String
+    - direccion : String
+    - telefono : String
+    - correo : String
+    + obtenerTodas() : List<Empresa>
+    + obtenerPorId(id: Long) : Optional<Empresa>
+    + guardar(empresa: Empresa) : Empresa
+    + eliminar(id: Long) : void
+}
 
-    class UsuarioRepository {
-        <<interface>>
-        +findByCorreo(String correo) Optional~Usuario~
-    }
+class Maquinaria {
+    - idMaquinaria : int
+    - nombre : String
+    - marca : String
+    - modelo : String
+    - año : int
+    - numeroSerie : String
+    - estado : String
+    + obtenerTodas() : List<Maquinaria>
+    + obtenerPorId(id: Long) : Optional<Maquinaria>
+    + guardar(maquinaria: Maquinaria) : Maquinaria
+    + eliminar(id: Long) : void
+    + listarTodas() : Object
+}
 
-    class EmpresaRepository {
-        <<interface>>
-    }
+class TipoMantenimiento {
+    - idTipo : int
+    - nombre : String
+    - descripcion : String
+    + listarTodos() : List<TipoMantenimiento>
+    + listarActivos() : List<TipoMantenimiento>
+    + guardar(tipoMantenimiento: TipoMantenimiento) : TipoMantenimiento
+    + cambiarEstado(id: Long, estado: Boolean) : TipoMantenimiento
+}
 
-    class MaquinariaRepository {
-        <<interface>>
-    }
+class Mantenimiento {
+    - idMantenimiento : int
+    - fechaProgramada : Date
+    - fechaVencimiento : Date
+    - descripcion : String
+    - estado : String
+    + programarMantenimiento()
+    + actualizarMantenimiento()
+}
 
-    Empresa "1" -- "*" Maquinaria : posee
-    UsuarioRepository ..> Usuario
-    EmpresaRepository ..> Empresa
-    MaquinariaRepository ..> Maquinaria
-```
+class Alerta {
+    - idAlerta : int
+    - mensaje : String
+    - fecha : Date
+    - estado : String
+    + obtenerAlertas(tipo: String, ubicacion: String, maquinariaId: Long) : List<Alerta>
+    + obtenerTodas() : List<Alerta>
+    + obtenerAlertasFiltradas(tipo: String, ubicacion: String, maquinariaId: Long) : List<Alerta>
+    + obtenerPorId(id: Long) : Optional<Alerta>
+    + guardar(alerta: Alerta) : Alerta
+    + eliminar(id: Long) : void
+}
+
+class Incidencia {
+    - idIncidencia : int
+    - fecha : Date
+    - descripcion : String
+    - gravedad : String
+    - estado : String
+    + obtenerTodosPaginados(pageable: Pageable) : Page<Incidencia>
+    + listarTodas() : List<Incidencia>
+    + guardar(incidencia: Incidencia) : Incidencia
+    + eliminarPorId(id: Integer) : void
+}
+
+' Relaciones
+
+Empresa "1" -- "0..*" Usuario : tiene
+Empresa "1" -- "0..*" Maquinaria : posee
+
+Maquinaria "1" -- "0..*" Mantenimiento : recibe
+TipoMantenimiento "1" -- "0..*" Mantenimiento : clasifica
+
+Mantenimiento "1" -- "0..*" Alerta : genera
+
+Maquinaria "1" -- "0..*" Incidencia : presenta
+
+Usuario "1" -- "0..*" Mantenimiento : programa
+Usuario "1" -- "0..*" Incidencia : registra
+
+@enduml

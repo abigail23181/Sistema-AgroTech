@@ -1,4 +1,5 @@
 @startuml
+title AgroTech - Diagrama de Clases
 
 class Usuario {
     - idUsuario : int
@@ -6,9 +7,12 @@ class Usuario {
     - correo : String
     - contraseña : String
     - rol : String
-    + iniciarSesion()
-    + registrarUsuario()
-    + actualizarUsuario()
+    + login(email: String, password: String) : Optional<Usuario>
+    + obtenerTodosPaginados(pageable: Pageable) : Page<Usuario>
+    + obtenerTodos() : List<Usuario>
+    + obtenerPorId(id: Integer) : Usuario
+    + crearOeditar(usuario: Usuario) : Usuario
+    + eliminarPorId(id: Integer) : void
 }
 
 class Empresa {
@@ -17,8 +21,10 @@ class Empresa {
     - direccion : String
     - telefono : String
     - correo : String
-    + registrarEmpresa()
-    + actualizarPerfil()
+    + obtenerTodas() : List<Empresa>
+    + obtenerPorId(id: Long) : Optional<Empresa>
+    + guardar(empresa: Empresa) : Empresa
+    + eliminar(id: Long) : void
 }
 
 class Maquinaria {
@@ -29,16 +35,21 @@ class Maquinaria {
     - año : int
     - numeroSerie : String
     - estado : String
-    + registrarMaquinaria()
-    + actualizarDatos()
+    + obtenerTodas() : List<Maquinaria>
+    + obtenerPorId(id: Long) : Optional<Maquinaria>
+    + guardar(maquinaria: Maquinaria) : Maquinaria
+    + eliminar(id: Long) : void
+    + listarTodas() : Object
 }
 
 class TipoMantenimiento {
     - idTipo : int
     - nombre : String
     - descripcion : String
-    + registrarTipo()
-    + actualizarTipo()
+    + listarTodos() : List<TipoMantenimiento>
+    + listarActivos() : List<TipoMantenimiento>
+    + guardar(tipoMantenimiento: TipoMantenimiento) : TipoMantenimiento
+    + cambiarEstado(id: Long, estado: Boolean) : TipoMantenimiento
 }
 
 class Mantenimiento {
@@ -56,8 +67,12 @@ class Alerta {
     - mensaje : String
     - fecha : Date
     - estado : String
-    + generarAlerta()
-    + consultarAlerta()
+    + obtenerAlertas(tipo: String, ubicacion: String, maquinariaId: Long) : List<Alerta>
+    + obtenerTodas() : List<Alerta>
+    + obtenerAlertasFiltradas(tipo: String, ubicacion: String, maquinariaId: Long) : List<Alerta>
+    + obtenerPorId(id: Long) : Optional<Alerta>
+    + guardar(alerta: Alerta) : Alerta
+    + eliminar(id: Long) : void
 }
 
 class Incidencia {
@@ -66,8 +81,10 @@ class Incidencia {
     - descripcion : String
     - gravedad : String
     - estado : String
-    + registrarIncidencia()
-    + actualizarIncidencia()
+    + obtenerTodosPaginados(pageable: Pageable) : Page<Incidencia>
+    + listarTodas() : List<Incidencia>
+    + guardar(incidencia: Incidencia) : Incidencia
+    + eliminarPorId(id: Integer) : void
 }
 
 ' Relaciones
