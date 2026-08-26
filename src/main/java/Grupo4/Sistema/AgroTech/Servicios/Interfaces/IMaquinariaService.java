@@ -9,4 +9,6 @@ public interface IMaquinariaService {
     Optional<Maquinaria> obtenerPorId(Long id);
     Maquinaria guardar(Maquinaria maquinaria);
     void eliminar(Long id);
+
+    Object listarTodas();
 }
