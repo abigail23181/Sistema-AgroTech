@@ -18,4 +18,5 @@ public interface IIncidenciaService {
     void eliminarPorId(Integer id);
 
     void eliminar(Long id);
+    
 }
