@@ -2,6 +2,7 @@ package Grupo4.Sistema.AgroTech.Servicios.Interfaces;
 
 import Grupo4.Sistema.AgroTech.Model.TipoMantenimiento;
 import java.util.List;
+git
 
 public interface ITipoMantenimientoService {
 
@@ -11,5 +12,6 @@ public interface ITipoMantenimientoService {
     TipoMantenimiento cambiarEstado(Long id, Boolean estado);
 
     void eliminar(Long id);
+
 
 }
