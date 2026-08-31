@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping({"/maquinaria", "/maquinarias"})
+@RequestMapping("/maquinaria")
 public class MaquinariaController {
 
     @Autowired
@@ -20,32 +20,32 @@ public class MaquinariaController {
     private IEmpresaService empresaService;
 
     @GetMapping
-    public String listarMaquinarias(Model model) {
+    public String listar(Model model) {
         model.addAttribute("maquinarias", maquinariaService.listarTodas());
         model.addAttribute("empresas", empresaService.listarTodas());
-        return "maquinaria";
+        return "maquinaria"; // Nombre del HTML
     }
 
     @PostMapping("/guardar")
-    public String guardarMaquinaria(@ModelAttribute Maquinaria maquinaria, RedirectAttributes redirectAttrs) {
+    public String guardar(@ModelAttribute Maquinaria maquinaria, RedirectAttributes redirectAttrs) {
         maquinariaService.guardar(maquinaria);
-        redirectAttrs.addFlashAttribute("mensaje", "¡Guardado exitosamente!");
+        redirectAttrs.addFlashAttribute("mensaje", "Maquinaria agregada exitosamente");
         redirectAttrs.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/maquinaria";
     }
 
     @PostMapping("/editar")
-    public String editarMaquinaria(@ModelAttribute Maquinaria maquinaria, RedirectAttributes redirectAttrs) {
+    public String editar(@ModelAttribute Maquinaria maquinaria, RedirectAttributes redirectAttrs) {
         maquinariaService.guardar(maquinaria);
-        redirectAttrs.addFlashAttribute("mensaje", "¡Maquinaria actualizada exitosamente!");
+        redirectAttrs.addFlashAttribute("mensaje", "Maquinaria actualizada correctamente");
         redirectAttrs.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/maquinaria";
     }
 
     @PostMapping("/eliminar")
-    public String eliminarMaquinaria(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
+    public String eliminar(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
         maquinariaService.eliminar(id);
-        redirectAttrs.addFlashAttribute("mensaje", "¡Maquinaria eliminada exitosamente!");
+        redirectAttrs.addFlashAttribute("mensaje", "Maquinaria eliminada correctamente");
         redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
         return "redirect:/maquinaria";
     }

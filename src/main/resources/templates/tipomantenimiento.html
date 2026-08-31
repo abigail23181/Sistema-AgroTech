@@ -1,217 +1,161 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/_mainLayout}">
 <head>
-    <title>Tipos de Mantenimiento</title>
+    <title>Tipo de Mantenimiento - AgroTech</title>
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div layout:fragment="content">
-    <div class="container-fluid py-4">
+<body class="bg-slate-50">
+<div layout:fragment="content" class="p-6">
 
-        <!-- MENSAJE DE NOTIFICACIÓN FLOTANTE -->
-        <div th:if="${mensaje}"
-             th:classappend="'alert-' + ${tipoMensaje != null ? tipoMensaje : 'success'}"
-             class="alert alert-dismissible fade show shadow-sm border-0 mb-4 rounded-3" role="alert">
-            <i class="bi bi-check-circle-fill me-2" th:if="${tipoMensaje == 'success' || tipoMensaje == null}"></i>
-            <i class="bi bi-exclamation-triangle-fill me-2" th:if="${tipoMensaje == 'warning'}"></i>
-            <i class="bi bi-trash-fill me-2" th:if="${tipoMensaje == 'danger'}"></i>
-            <span th:text="${mensaje}" class="fw-semibold">¡Mensaje del sistema!</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- MENSAJE DE NOTIFICACIÓN FLOTANTE -->
+    <div th:if="${mensaje}"
+         class="mb-6 p-4 rounded-xl flex items-center justify-between shadow-sm border transition-all"
+         th:classappend="${tipoMensaje == 'success' || tipoMensaje == null ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : (tipoMensaje == 'warning' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-red-50 text-red-800 border-red-200')}">
+        <div class="flex items-center gap-3">
+            <i class="bi text-xl" th:classappend="${tipoMensaje == 'success' || tipoMensaje == null ? 'bi-check-circle-fill text-emerald-600' : (tipoMensaje == 'warning' ? 'bi-exclamation-triangle-fill text-amber-600' : 'bi-x-circle-fill text-red-600')}"></i>
+            <span th:text="${mensaje}" class="font-medium text-sm">¡Registro guardado correctamente!</span>
         </div>
+        <button type="button" class="text-slate-400 hover:text-slate-600" data-bs-dismiss="alert">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
 
-        <!-- Tarjeta Principal -->
-        <div class="card shadow border-0 rounded-4">
+    <!-- ENCABEZADO -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                <span class="p-2 bg-emerald-100 text-emerald-700 rounded-lg text-lg"><i class="bi bi-tools"></i></span>
+                Tipos de Mantenimiento
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">Gestión de categorías y servicios técnicos registrados en AgroTech.</p>
+        </div>
+        <!-- Botón que activa el Modal Moderno -->
+        <button data-bs-toggle="modal" data-bs-target="#modalCrear"
+                class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition">
+            <i class="bi bi-plus-lg text-sm"></i> Nuevo Tipo
+        </button>
+    </div>
 
-            <!-- Encabezado -->
-            <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                <div>
-                    <h3 class="fw-bold mb-1 text-primary"><i class="bi bi-tools me-2"></i>Tipos de Mantenimiento</h3>
-                    <p class="text-muted small mb-0">Gestión de categorías y tipos de servicios técnicos.</p>
+    <!-- VISTA EN TARJETAS (CUADRÍCULA) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" th:if="${!#lists.isEmpty(lista)}">
+        <div th:each="tm : ${lista}" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+            <div>
+                <!-- Estado e ID -->
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-[11px] font-mono font-bold text-slate-400" th:text="'ID #' + ${tm.id}">ID #1</span>
+                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full border"
+                          th:classappend="${tm.activo ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}"
+                          th:text="${tm.activo ? '● Activo' : '○ Inactivo'}">Activo</span>
                 </div>
-                <!-- Botón Crear -->
-                <button class="btn btn-success px-3 rounded-3 shadow-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#modalCrear">
-                    <i class="bi bi-plus-lg me-1"></i> Nuevo Tipo
-                </button>
+
+                <!-- Nombre y Descripción -->
+                <h3 class="text-base font-bold text-slate-800 mb-2 flex items-center gap-2" th:text="${tm.nombre}">
+                    Preventivo
+                </h3>
+                <p class="text-xs text-slate-500 line-clamp-3 mb-4" th:text="${tm.descripcion}">
+                    Sin descripción proporcionada.
+                </p>
             </div>
 
-            <div class="card-body p-4">
-
-                <!-- Tabla de Registros -->
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark">
-                        <tr>
-                            <th class="py-3 px-3">ID</th>
-                            <th class="py-3">Nombre</th>
-                            <th class="py-3">Descripción</th>
-                            <th class="py-3 text-center">Estado</th>
-                            <th class="py-3 text-end px-3">Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="tm : ${lista}">
-                            <td class="fw-bold px-3" th:text="${tm.id}">1</td>
-                            <td class="fw-semibold text-dark" th:text="${tm.nombre}">Preventivo</td>
-                            <td th:text="${tm.descripcion}">Mantenimiento periódico programado</td>
-                            <td class="text-center">
-                                <span class="badge rounded-pill px-3 py-2"
-                                      th:classappend="${tm.activo ? 'bg-success-subtle text-success border border-success' : 'bg-secondary-subtle text-secondary border border-secondary'}"
-                                      th:text="${tm.activo ? 'Activo' : 'Inactivo'}">Activo</span>
-                            </td>
-
-                            <!-- Botones de Acción -->
-                            <td class="text-end px-3">
-                                <button class="btn btn-outline-primary btn-sm me-1 rounded-2"
-                                        data-bs-toggle="modal"
-                                        th:data-bs-target="'#modalEditar-' + ${tm.id}"
-                                        title="Editar">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-
-                                <button class="btn btn-outline-warning btn-sm me-1 rounded-2"
-                                        data-bs-toggle="modal"
-                                        th:data-bs-target="'#modalEstado-' + ${tm.id}"
-                                        title="Cambiar Estado">
-                                    <i class="bi bi-arrow-repeat"></i>
-                                </button>
-
-                                <button class="btn btn-outline-danger btn-sm rounded-2"
-                                        data-bs-toggle="modal"
-                                        th:data-bs-target="'#modalEliminar-' + ${tm.id}"
-                                        title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(lista)}">
-                            <td colspan="5" class="text-center py-5 text-muted">
-                                <i class="bi bi-inbox display-5 d-block mb-2 text-secondary opacity-50"></i>
-                                No hay tipos de mantenimiento registrados.
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+            <!-- Acciones -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+                <form th:action="@{/tipomantenimiento/estado/{id}(id=${tm.id})}" method="post" class="inline">
+                    <input type="hidden" name="activo" th:value="${!tm.activo}">
+                    <button type="submit" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition text-xs font-semibold" title="Cambiar Estado">
+                        <i class="bi bi-arrow-repeat text-sm"></i>
+                    </button>
+                </form>
+                <form th:action="@{/tipomantenimiento/eliminar/{id}(id=${tm.id})}" method="post" class="inline" onsubmit="return confirm('¿Eliminar este tipo de mantenimiento?');">
+                    <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition text-xs font-semibold" title="Eliminar">
+                        <i class="bi bi-trash text-sm"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- CONTENEDOR DE MODALES DE EDICIÓN, ESTADO Y ELIMINACIÓN -->
-    <div th:each="tm : ${lista}">
-        <!-- MODAL EDITAR -->
-        <div class="modal fade" th:id="'modalEditar-' + ${tm.id}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <form th:action="@{/tipos-mantenimiento/guardar}" method="post">
-                        <div class="modal-header bg-primary text-white rounded-top-4">
-                            <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Editar Tipo de Mantenimiento</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body p-4">
-                            <input type="hidden" name="id" th:value="${tm.id}">
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nombre</label>
-                                <input type="text" name="nombre" class="form-control rounded-3" th:value="${tm.nombre}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Descripción</label>
-                                <textarea name="descripcion" class="form-control rounded-3" rows="3" th:text="${tm.descripcion}"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Estado</label>
-                                <select name="activo" class="form-select rounded-3" required>
-                                    <option value="true" th:selected="${tm.activo == true}">Activo</option>
-                                    <option value="false" th:selected="${tm.activo == false}">Inactivo</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0 px-4 pb-4 pt-0">
-                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Cambios</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <!-- ESTADO VACÍO (Si no hay datos aún) -->
+    <div th:if="${#lists.isEmpty(lista)}" class="bg-white border border-slate-200 rounded-2xl p-12 text-center max-w-md mx-auto my-8 shadow-sm">
+        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 text-2xl">
+            <i class="bi bi-inbox"></i>
         </div>
-
-        <!-- MODAL CAMBIAR ESTADO -->
-        <div class="modal fade" th:id="'modalEstado-' + ${tm.id}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <form th:action="@{/tipos-mantenimiento/estado/{id}(id=${tm.id})}" method="post">
-                        <input type="hidden" name="activo" th:value="${!tm.activo}">
-                        <div class="modal-body text-center pt-4 pb-2 px-4">
-                            <i class="bi bi-exclamation-circle text-warning display-4"></i>
-                            <h5 class="mt-3 fw-bold">¿Cambiar Estado?</h5>
-                            <p class="text-muted small mb-0">
-                                El tipo pasará a estar <strong th:text="${tm.activo ? 'INACTIVO' : 'ACTIVO'}"></strong>.
-                            </p>
-                        </div>
-                        <div class="modal-footer border-0 justify-content-center pb-4 pt-3">
-                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-warning rounded-3 px-4">Confirmar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL ELIMINAR -->
-        <div class="modal fade" th:id="'modalEliminar-' + ${tm.id}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <form th:action="@{/tipos-mantenimiento/eliminar/{id}(id=${tm.id})}" method="post">
-                        <div class="modal-body text-center pt-4 pb-2 px-4">
-                            <i class="bi bi-trash text-danger display-4"></i>
-                            <h5 class="mt-3 fw-bold">¿Eliminar Tipo?</h5>
-                            <p class="text-muted small mb-0">Esta acción no se puede deshacer.</p>
-                        </div>
-                        <div class="modal-footer border-0 justify-content-center pb-4 pt-3">
-                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-danger rounded-3 px-4">Eliminar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <h3 class="text-base font-bold text-slate-700 mb-1">Sin registros guardados</h3>
+        <p class="text-xs text-slate-400 mb-6">No has agregado ningún tipo de mantenimiento a la base de datos.</p>
+        <button data-bs-toggle="modal" data-bs-target="#modalCrear" class="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md">
+            <i class="bi bi-plus-lg"></i> Crear el primero
+        </button>
     </div>
 
-    <!-- MODAL CREAR -->
+    <!-- MODAL ESTILIZADO DE CREACIÓN -->
     <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <form th:action="@{/tipos-mantenimiento/guardar}" method="post">
-                    <div class="modal-header bg-success text-white rounded-top-4">
-                        <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Nuevo Tipo de Mantenimiento</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-content border-0 rounded-2xl shadow-2xl overflow-hidden p-0">
+
+                <!-- Encabezado con Icono -->
+                <div class="bg-emerald-600 px-6 py-4 text-white flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-emerald-700/50 rounded-lg">
+                            <i class="bi bi-tools text-xl"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-base font-bold leading-tight mb-0">Nuevo Tipo de Mantenimiento</h5>
+                            <p class="text-[11px] text-emerald-100 mb-0">Ingresa la información requerida</p>
+                        </div>
                     </div>
-                    <div class="modal-body p-4">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Nombre</label>
-                            <input type="text" name="nombre" class="form-control rounded-3" placeholder="Ej: Correctivo" required>
+                    <button type="button" class="text-emerald-100 hover:text-white transition" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Formulario -->
+                <form th:action="@{/tipomantenimiento/guardar}" method="post" class="p-6 space-y-4 bg-white">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Nombre del Servicio</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                <i class="bi bi-tag"></i>
+                            </span>
+                            <input type="text" name="nombre" placeholder="Ej: Correctivo, Preventivo..."
+                                   class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Descripción</label>
-                            <textarea name="descripcion" class="form-control rounded-3" rows="3" placeholder="Descripción detallada del tipo..."></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Estado Inicial</label>
-                            <select name="activo" class="form-select rounded-3" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Descripción</label>
+                        <textarea name="descripcion" rows="3" placeholder="Descripción detallada del tipo de servicio..."
+                                  class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Estado Inicial</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                <i class="bi bi-toggle-on"></i>
+                            </span>
+                            <select name="activo" class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" required>
                                 <option value="true" selected>Activo</option>
                                 <option value="false">Inactivo</option>
                             </select>
                         </div>
                     </div>
-                    <div class="modal-footer border-0 px-4 pb-4 pt-0">
-                        <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success rounded-3 px-4">Guardar Tipo</button>
+
+                    <!-- Botones -->
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                        <button type="button" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs rounded-xl transition" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition">
+                            <i class="bi bi-check-circle"></i> Guardar Tipo
+                        </button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>

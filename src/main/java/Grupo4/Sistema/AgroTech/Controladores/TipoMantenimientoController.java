@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/tipos-mantenimiento")
+@RequestMapping("/tipomantenimiento")
 public class TipoMantenimientoController {
 
     @Autowired
@@ -20,17 +20,25 @@ public class TipoMantenimientoController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("lista", service.listarTodos());
-        return "tipos-mantenimiento/index";
+        // Instancia vacía para que Thymeleaf procese el formulario correctamente
+        if (!model.containsAttribute("tipoMantenimiento")) {
+            model.addAttribute("tipoMantenimiento", new TipoMantenimiento());
+        }
+        return "tipomantenimiento";
     }
 
     @PostMapping("/guardar")
-    public String guardar(@Valid @ModelAttribute TipoMantenimiento tipoMantenimiento,
+    public String guardar(@Valid @ModelAttribute("tipoMantenimiento") TipoMantenimiento tipoMantenimiento,
                           BindingResult result,
                           Model model,
                           RedirectAttributes redirectAttrs) {
+
+        // Imprimir errores en consola si falla la validación
         if (result.hasErrors()) {
+            System.out.println(">>> ERRORES AL GUARDAR:");
+            result.getAllErrors().forEach(err -> System.out.println(err.getDefaultMessage()));
             model.addAttribute("lista", service.listarTodos());
-            return "tipos-mantenimiento/index";
+            return "tipomantenimiento";
         }
 
         boolean esNuevo = (tipoMantenimiento.getId() == null);
@@ -43,7 +51,7 @@ public class TipoMantenimientoController {
         }
         redirectAttrs.addFlashAttribute("tipoMensaje", "success");
 
-        return "redirect:/tipos-mantenimiento";
+        return "redirect:/tipomantenimiento";
     }
 
     @PostMapping("/estado/{id}")
@@ -53,7 +61,7 @@ public class TipoMantenimientoController {
         service.cambiarEstado(id, activo);
         redirectAttrs.addFlashAttribute("mensaje", "¡Estado cambiado correctamente!");
         redirectAttrs.addFlashAttribute("tipoMensaje", "warning");
-        return "redirect:/tipos-mantenimiento";
+        return "redirect:/tipomantenimiento";
     }
 
     @PostMapping("/eliminar/{id}")
@@ -61,6 +69,6 @@ public class TipoMantenimientoController {
         service.eliminar(id);
         redirectAttrs.addFlashAttribute("mensaje", "¡Registro eliminado correctamente!");
         redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
-        return "redirect:/tipos-mantenimiento";
+        return "redirect:/tipomantenimiento";
     }
 }

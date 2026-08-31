@@ -5,43 +5,31 @@ import Grupo4.Sistema.AgroTech.Repositorios.MaquinariaRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IMaquinariaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Service
 public class MaquinariaServiceImpl implements IMaquinariaService {
 
-    private final MaquinariaRepository maquinariaRepository;
-
     @Autowired
-    public MaquinariaServiceImpl(MaquinariaRepository maquinariaRepository) {
-        this.maquinariaRepository = maquinariaRepository;
+    private MaquinariaRepository repository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Maquinaria> listarTodas() {
+        return repository.findAll();
     }
 
     @Override
-    public List<Maquinaria> obtenerTodas() {
-        return maquinariaRepository.findAll();
+    @Transactional
+    public void guardar(Maquinaria maquinaria) {
+        repository.save(maquinaria);
     }
 
     @Override
-    public Optional<Maquinaria> obtenerPorId(Long id) {
-        return maquinariaRepository.findById(id);
-    }
-
-    @Override
-    public Maquinaria guardar(Maquinaria maquinaria) {
-        return maquinariaRepository.save(maquinaria);
-    }
-
-    @Override
+    @Transactional
     public void eliminar(Long id) {
-        maquinariaRepository.deleteById(id);
-    }
-
-    @Override
-    public Object listarTodas() {
-        return null;
+        repository.deleteById(id);
     }
 }

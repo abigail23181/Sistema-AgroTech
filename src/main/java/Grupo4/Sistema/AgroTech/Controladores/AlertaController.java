@@ -2,77 +2,64 @@ package Grupo4.Sistema.AgroTech.Controladores;
 
 import Grupo4.Sistema.AgroTech.Model.Alerta;
 import Grupo4.Sistema.AgroTech.Model.Maquinaria;
-import Grupo4.Sistema.AgroTech.Servicios.Implementaciones.AlertaServiceImpl;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IAlertaService;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IMaquinariaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/alertas")
 public class AlertaController {
 
     @Autowired
-    private AlertaServiceImpl alertaService;
+    private IAlertaService alertaService;
 
     @Autowired
     private IMaquinariaService maquinariaService;
 
-    // Listar alertas y filtrado
     @GetMapping
-    public String listarAlertas(@RequestParam(required = false) String tipo,
-                                @RequestParam(required = false) String ubicacion,
-                                @RequestParam(required = false) Long maquinariaId,
-                                Model model) {
-
-        List<Alerta> alertas = alertaService.obtenerAlertas(tipo, ubicacion, maquinariaId);
-
-        model.addAttribute("alertas", alertas);
+    public String listar(Model model) {
+        model.addAttribute("alertas", alertaService.listarTodas());
         model.addAttribute("maquinarias", maquinariaService.listarTodas());
-        model.addAttribute("tipoFiltro", tipo);
-        model.addAttribute("ubicacionFiltro", ubicacion);
-        model.addAttribute("maquinariaFiltro", maquinariaId);
-
-        return "alertas";
+        return "alertas"; // Nombre del archivo HTML
     }
 
-    // Crear Nueva Alerta
     @PostMapping("/guardar")
-    public String guardarAlerta(@ModelAttribute Alerta alerta,
-                                @RequestParam("maquinariaId") Long maquinariaId) {
+    public String guardar(@ModelAttribute Alerta alerta,
+                          @RequestParam("maquinariaId") Long maquinariaId,
+                          RedirectAttributes redirectAttrs) {
+        Maquinaria m = new Maquinaria();
+        m.setIdMaquinaria(maquinariaId);
+        alerta.setMaquinaria(m);
 
-        // Asociar la entidad Maquinaria seleccionada
-        if (maquinariaId != null) {
-            Optional<Maquinaria> maquinaria = maquinariaService.obtenerPorId(maquinariaId);
-            alerta.setMaquinaria(maquinaria.orElse(null));
-        }
-
-        alertaService.guardar(alerta); // Ajusta según el nombre real de tu método
+        alertaService.guardar(alerta);
+        redirectAttrs.addFlashAttribute("mensaje", "Alerta creada exitosamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/alertas";
     }
 
-    // Editar Alerta Existente
     @PostMapping("/editar")
-    public String editarAlerta(@ModelAttribute Alerta alerta,
-                               @RequestParam("maquinariaId") Long maquinariaId) {
+    public String editar(@ModelAttribute Alerta alerta,
+                         @RequestParam("maquinariaId") Long maquinariaId,
+                         RedirectAttributes redirectAttrs) {
+        Maquinaria m = new Maquinaria();
+        m.setIdMaquinaria(maquinariaId);
+        alerta.setMaquinaria(m);
 
-        if (maquinariaId != null) {
-            Optional<Maquinaria> maquinaria = maquinariaService.obtenerPorId(maquinariaId);
-            alerta.setMaquinaria(maquinaria.orElse(null));
-        }
-
-        alertaService.guardar(alerta); // O alertaService.actualizar(alerta);
+        alertaService.guardar(alerta);
+        redirectAttrs.addFlashAttribute("mensaje", "Alerta actualizada correctamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/alertas";
     }
 
-    // Eliminar Alerta
     @PostMapping("/eliminar")
-    public String eliminarAlerta(@RequestParam("id") Long id) {
-        alertaService.eliminar(id); // Ajusta según el nombre real de tu método de servicio
+    public String eliminar(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
+        alertaService.eliminar(id);
+        redirectAttrs.addFlashAttribute("mensaje", "Alerta eliminada correctamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
         return "redirect:/alertas";
     }
 }

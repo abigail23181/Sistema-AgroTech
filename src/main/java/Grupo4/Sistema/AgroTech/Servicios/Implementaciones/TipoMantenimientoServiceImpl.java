@@ -2,9 +2,12 @@ package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 
 import Grupo4.Sistema.AgroTech.Model.TipoMantenimiento;
 import Grupo4.Sistema.AgroTech.Repositorios.TipoMantenimientoRepository;
+import Grupo4.Sistema.AgroTech.Repositorios.TipoMantenimientoRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.ITipoMantenimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -14,36 +17,29 @@ public class TipoMantenimientoServiceImpl implements ITipoMantenimientoService {
     private TipoMantenimientoRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TipoMantenimiento> listarTodos() {
         return repository.findAll();
     }
 
     @Override
-    public List<TipoMantenimiento> listarActivos() {
-        return repository.findByActivoTrue();
+    @Transactional
+    public void guardar(TipoMantenimiento tipoMantenimiento) {
+        repository.save(tipoMantenimiento);
     }
 
     @Override
-    public TipoMantenimiento guardar(TipoMantenimiento tipo) {
-        if (repository.existsByNombreIgnoreCase(tipo.getNombre())) {
-            throw new IllegalArgumentException("El nombre del tipo de mantenimiento ya existe.");
-        }
-        return repository.save(tipo);
-   
+    @Transactional
+    public void cambiarEstado(Long id, Boolean activo) {
+        repository.findById(id).ifPresent(tm -> {
+            tm.setActivo(activo);
+            repository.save(tm);
+        });
     }
 
     @Override
-    public TipoMantenimiento cambiarEstado(Long id, Boolean estado) {
-        TipoMantenimiento tipo = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tipo de mantenimiento no encontrado"));
-        tipo.setActivo(estado);
-        return repository.save(tipo);
-   
-    }
-
-    @Override
+    @Transactional
     public void eliminar(Long id) {
-
-
+        repository.deleteById(id);
     }
 }
