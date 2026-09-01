@@ -6,36 +6,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping({"/incidencias", "/incidencia"}) // Acepta plural y singular
+@RequestMapping("/incidencia/historial")
 public class IncidenciaController {
 
     @Autowired
     private IIncidenciaService incidenciaService;
 
-    // Acepta http://localhost:8080/incidencias y http://localhost:8080/incidencias/historial
-    @GetMapping({"", "/", "/historial"})
-    public String listarIncidencias(Model model) {
+    @GetMapping
+    public String listar(Model model) {
         model.addAttribute("incidencias", incidenciaService.listarTodas());
-        return "incidencia_historial"; // Verifica que el archivo se llame tal cual en templates/
+        return "incidencia_historial";
     }
 
     @PostMapping("/guardar")
-    public String guardarIncidencia(@ModelAttribute Incidencia incidencia) {
+    public String guardar(@ModelAttribute Incidencia incidencia, RedirectAttributes redirectAttrs) {
         incidenciaService.guardar(incidencia);
-        return "redirect:/incidencias";
+        redirectAttrs.addFlashAttribute("mensaje", "Incidencia registrada exitosamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+        return "redirect:/incidencia/historial";
     }
 
     @PostMapping("/editar")
-    public String editarIncidencia(@ModelAttribute Incidencia incidencia) {
+    public String editar(@ModelAttribute Incidencia incidencia, RedirectAttributes redirectAttrs) {
         incidenciaService.guardar(incidencia);
-        return "redirect:/incidencias";
+        redirectAttrs.addFlashAttribute("mensaje", "Incidencia actualizada correctamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+        return "redirect:/incidencia/historial";
     }
 
     @PostMapping("/eliminar")
-    public String eliminarIncidencia(@RequestParam("id") Long id) {
+    public String eliminar(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
         incidenciaService.eliminar(id);
-        return "redirect:/incidencias";
+        redirectAttrs.addFlashAttribute("mensaje", "Incidencia eliminada correctamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
+        return "redirect:/incidencia/historial";
     }
 }

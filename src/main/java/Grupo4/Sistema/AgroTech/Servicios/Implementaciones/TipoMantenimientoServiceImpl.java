@@ -42,4 +42,9 @@ public class TipoMantenimientoServiceImpl implements ITipoMantenimientoService {
     public void eliminar(Long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public TipoMantenimiento obtenerPorId(Long id) {
+        return null;
+    }
 }

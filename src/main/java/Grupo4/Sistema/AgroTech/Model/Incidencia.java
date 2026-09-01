@@ -1,36 +1,40 @@
 package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "incidencias")
 public class Incidencia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "La severidad es obligatoria")
+    @Column(nullable = false, length = 20)
     private String severidad;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(nullable = false)
     private LocalDate fecha;
 
-    @NotBlank(message = "La ubicación es obligatoria")
+    @Column(nullable = false, length = 150)
     private String ubicacion;
 
+    @Column(nullable = false, length = 30)
     private String estado;
 
     public Incidencia() {}
 
-    public Incidencia(String severidad, LocalDate fecha, String ubicacion, String estado) {
+    public Incidencia(Long id, String severidad, LocalDate fecha, String ubicacion, String estado) {
+        this.id = id;
         this.severidad = severidad;
         this.fecha = fecha;
         this.ubicacion = ubicacion;
         this.estado = estado;
     }
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

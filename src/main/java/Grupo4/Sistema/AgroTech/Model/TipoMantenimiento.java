@@ -1,8 +1,6 @@
 package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "tipos_mantenimiento")
@@ -12,18 +10,15 @@ public class TipoMantenimiento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre es obligatorio")
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(length = 255)
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @NotNull(message = "El estado es obligatorio")
     @Column(nullable = false)
     private Boolean activo = true;
 
-    // Constructores
     public TipoMantenimiento() {}
 
     public TipoMantenimiento(Long id, String nombre, String descripcion, Boolean activo) {
@@ -33,7 +28,6 @@ public class TipoMantenimiento {
         this.activo = activo;
     }
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

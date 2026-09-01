@@ -8,4 +8,6 @@ public interface ITipoMantenimientoService {
     void guardar(TipoMantenimiento tipoMantenimiento);
     void cambiarEstado(Long id, Boolean activo);
     void eliminar(Long id);
+
+    TipoMantenimiento obtenerPorId(Long id);
 }

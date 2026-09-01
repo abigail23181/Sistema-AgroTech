@@ -2,11 +2,9 @@ package Grupo4.Sistema.AgroTech.Controladores;
 
 import Grupo4.Sistema.AgroTech.Model.TipoMantenimiento;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.ITipoMantenimientoService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -15,59 +13,46 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TipoMantenimientoController {
 
     @Autowired
-    private ITipoMantenimientoService service;
+    private ITipoMantenimientoService tipoMantenimientoService;
 
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("lista", service.listarTodos());
-        // Instancia vacía para que Thymeleaf procese el formulario correctamente
-        if (!model.containsAttribute("tipoMantenimiento")) {
-            model.addAttribute("tipoMantenimiento", new TipoMantenimiento());
-        }
+        model.addAttribute("lista", tipoMantenimientoService.listarTodos());
         return "tipomantenimiento";
     }
 
     @PostMapping("/guardar")
-    public String guardar(@Valid @ModelAttribute("tipoMantenimiento") TipoMantenimiento tipoMantenimiento,
-                          BindingResult result,
-                          Model model,
-                          RedirectAttributes redirectAttrs) {
-
-        // Imprimir errores en consola si falla la validación
-        if (result.hasErrors()) {
-            System.out.println(">>> ERRORES AL GUARDAR:");
-            result.getAllErrors().forEach(err -> System.out.println(err.getDefaultMessage()));
-            model.addAttribute("lista", service.listarTodos());
-            return "tipomantenimiento";
-        }
-
-        boolean esNuevo = (tipoMantenimiento.getId() == null);
-        service.guardar(tipoMantenimiento);
-
-        if (esNuevo) {
-            redirectAttrs.addFlashAttribute("mensaje", "¡Guardado exitosamente!");
-        } else {
-            redirectAttrs.addFlashAttribute("mensaje", "¡Cambios Guardados Correctamente!");
-        }
+    public String guardar(@ModelAttribute TipoMantenimiento tipoMantenimiento, RedirectAttributes redirectAttrs) {
+        tipoMantenimientoService.guardar(tipoMantenimiento);
+        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento registrado exitosamente");
         redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+        return "redirect:/tipomantenimiento";
+    }
 
+    @PostMapping("/editar")
+    public String editar(@ModelAttribute TipoMantenimiento tipoMantenimiento, RedirectAttributes redirectAttrs) {
+        tipoMantenimientoService.guardar(tipoMantenimiento);
+        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento actualizado correctamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/tipomantenimiento";
     }
 
     @PostMapping("/estado/{id}")
-    public String cambiarEstado(@PathVariable Long id,
-                                @RequestParam Boolean activo,
-                                RedirectAttributes redirectAttrs) {
-        service.cambiarEstado(id, activo);
-        redirectAttrs.addFlashAttribute("mensaje", "¡Estado cambiado correctamente!");
-        redirectAttrs.addFlashAttribute("tipoMensaje", "warning");
+    public String cambiarEstado(@PathVariable("id") Long id, @RequestParam("activo") Boolean activo, RedirectAttributes redirectAttrs) {
+        TipoMantenimiento tm = tipoMantenimientoService.obtenerPorId(id);
+        if (tm != null) {
+            tm.setActivo(activo);
+            tipoMantenimientoService.guardar(tm);
+            redirectAttrs.addFlashAttribute("mensaje", "Estado actualizado correctamente");
+            redirectAttrs.addFlashAttribute("tipoMensaje", "warning");
+        }
         return "redirect:/tipomantenimiento";
     }
 
-    @PostMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttrs) {
-        service.eliminar(id);
-        redirectAttrs.addFlashAttribute("mensaje", "¡Registro eliminado correctamente!");
+    @PostMapping("/eliminar")
+    public String eliminar(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
+        tipoMantenimientoService.eliminar(id);
+        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento eliminado correctamente");
         redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
         return "redirect:/tipomantenimiento";
     }
