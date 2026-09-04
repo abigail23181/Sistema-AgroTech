@@ -3,6 +3,7 @@ package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 import Grupo4.Sistema.AgroTech.Model.Maquinaria;
 import Grupo4.Sistema.AgroTech.Repositorios.MaquinariaRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IMaquinariaService;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,10 @@ public class MaquinariaServiceImpl implements IMaquinariaService {
     @Override
     public void eliminar(Long id) {
         maquinariaRepository.deleteById(id);
+    }
+
+    @Override
+    public @Nullable Object listarTodas() {
+        return null;
     }
 }

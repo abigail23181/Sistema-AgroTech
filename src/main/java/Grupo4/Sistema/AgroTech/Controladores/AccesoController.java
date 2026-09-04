@@ -1,105 +1,65 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
+import Grupo4.Sistema.AgroTech.Model.Acceso;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IAccesoService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AccesoController {
 
-    @GetMapping("/login")
-<<<<<<< Updated upstream
-    public String login() {
-        return "login"; // Carga templates/login.html
-=======
-    public String login(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") != null) {
+    @Autowired
+    private IAccesoService accesoService;
+
+    @GetMapping({"/", "/acceso", "/login"})
+    public String verAcceso() {
+        return "acceso";
+    }
+
+    @PostMapping("/acceso")
+    public String procesarAcceso(@RequestParam("email") String email,
+                                 @RequestParam("password") String password,
+                                 HttpSession session,
+                                 Model model) {
+
+        // 1. CREDENCIAI FJA POR DEFECTO PARA PRUEBAS
+        if ("admin@agrotech.com".equalsIgnoreCase(email) && "123456".equals(password)) {
+            Acceso usuarioAdmin = new Acceso();
+            usuarioAdmin.setEmail(email);
+            usuarioAdmin.setNombre("Administrador");
+            usuarioAdmin.setRol("ADMIN");
+
+            session.setAttribute("accesoLogueado", usuarioAdmin);
+            session.setAttribute("rol", usuarioAdmin.getRol());
+
             return "redirect:/dashboard";
         }
-        return "login";
-    }
 
-    @PostMapping("/login")
-    public String procesarLogin(@RequestParam("username") String username,
-                                @RequestParam("password") String password,
-                                HttpSession session) {
+        // 2. BUSQUEDA NORMAL EN LA BASE DE DATOS (SI NO ES EL ADMIN POR DEFECTO)
+        Optional<Acceso> accesoOpt = Optional.ofNullable(accesoService.autenticar(email, password));
 
-        boolean correoValido = username.endsWith("@agrotech.com") || username.endsWith("@gmail.com");
+        if (accesoOpt.isPresent()) {
+            Acceso acceso = accesoOpt.get();
+            session.setAttribute("accesoLogueado", acceso);
+            session.setAttribute("rol", acceso.getRol());
 
-        if (correoValido && "123456".equals(password)) {
-            session.setAttribute("usuarioLogueado", username);
-            session.setAttribute("rolLogueado", "Administrador"); // Asigna el rol correspondiente
             return "redirect:/dashboard";
+        } else {
+            model.addAttribute("error", "Usuario o contraseña incorrectos");
+            return "acceso";
         }
-
-        // Falla de autenticación genérica por seguridad (criterio 2)
-        return "redirect:/login?error=true";
-    }
-
-    @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
-
-        // Módulos exigidos en la historia de usuario
-        List<String> modulosAutorizados = Arrays.asList(
-                "Catálogo e inventario de maquinaria industrial",
-                "Programación y calendario de mantenimiento preventivo",
-                "Alertas y registro de ordenes de trabajo por imprevistos/correctivos",
-                "Gestión de usuarios y roles (técnicos, supervisores, operadores)"
-        );
-
-        model.addAttribute("usuario", session.getAttribute("usuarioLogueado"));
-        model.addAttribute("rol", session.getAttribute("rolLogueado"));
-        model.addAttribute("modulos", modulosAutorizados);
-
-        return "dashboard";
-    }
-
-    @GetMapping("/registro")
-    public String mostrarRegistro() {
-        return "registro";
-    }
-
-    @PostMapping("/registro")
-    public String procesarRegistro(@RequestParam("nombre") String nombre,
-                                   @RequestParam("username") String username,
-                                   @RequestParam("password") String password) {
-        if (!username.endsWith("@agrotech.com") && !username.endsWith("@gmail.com")) {
-            return "redirect:/registro?errorCorreo=true";
-        }
-        return "redirect:/login?exito=Cuenta+creada+exitosamente";
-    }
-
-    @GetMapping("/recuperar")
-    public String mostrarRecuperar() {
-        return "recuperar";
-    }
-
-    @PostMapping("/recuperar")
-    public String procesarRecuperar(@RequestParam("username") String username) {
-        if (!username.endsWith("@agrotech.com") && !username.endsWith("@gmail.com")) {
-            return "redirect:/recuperar?errorCorreo=true";
-        }
-        return "redirect:/login?exito=Enlace+enviado+a+tu+correo";
-    }
-
-    @GetMapping("/perfil")
-    public String verPerfil(HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("usuario", session.getAttribute("usuarioLogueado"));
-        return "perfil";
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String cerrarSesion(HttpSession session) {
         session.invalidate();
-        return "redirect:/login?logout=true";
->>>>>>> Stashed changes
+        return "redirect:/acceso";
     }
 }

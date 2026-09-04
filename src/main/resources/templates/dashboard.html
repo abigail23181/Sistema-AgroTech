@@ -47,7 +47,10 @@
         <h3 class="fw-bold text-success mb-0 d-flex align-items-center gap-2">
             🌲 Panel de Control (Dashboard) Administrador
         </h3>
-        <span class="badge bg-light text-dark border px-3 py-2" th:text="${usuario}">admin@agrotech.com</span>
+        <span class="badge bg-light text-dark border px-3 py-2"
+              th:text="${session.accesoLogueado != null ? session.accesoLogueado.email : 'admin@agrotech.com'}">
+            admin@agrotech.com
+        </span>
     </div>
 
     <!-- TARJETAS SUPERIORES DE ESTADÍSTICAS -->
@@ -94,11 +97,13 @@
     </div>
 
     <!-- SECCIÓN DE MÓDULOS DEL SISTEMA -->
-    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4" th:if="${modulos != null}">
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
         <h5 class="fw-bold text-dark mb-3">
-            <i class="bi bi-shield-lock-fill text-success me-2"></i> Módulos Autorizados para Rol: <span class="text-success" th:text="${rol}">Administrador</span>
+            <i class="bi bi-shield-lock-fill text-success me-2"></i> Módulos Autorizados para Rol:
+            <span class="text-success" th:text="${session.rol != null ? session.rol : 'Administrador'}">Administrador</span>
         </h5>
-        <div class="row g-3">
+
+        <div class="row g-3" th:if="${modulos != null}">
             <div class="col-md-6" th:each="modulo : ${modulos}">
                 <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
                     <i class="bi bi-check-circle-fill text-success fs-4"></i>
@@ -106,32 +111,74 @@
                 </div>
             </div>
         </div>
+
+        <div class="row g-3" th:if="${modulos == null}">
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Catálogo e inventario de maquinaria industrial</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Programación y calendario de mantenimiento preventivo</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Alertas y registro de órdenes de trabajo (imprevistos/correctivos)</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Gestión de usuarios y roles (técnicos, supervisores, operadores)</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- TARJETAS DE ACCESO DIRECTO A MÓDULOS -->
+    <!-- TARJETAS DE ACCESO DIRECTO A MÓDULOS AUTORIZADOS -->
     <div class="row g-4">
-        <div class="col-md-4">
+        <!-- 1. Catálogo e inventario de maquinaria industrial -->
+        <div class="col-md-6 col-lg-3">
             <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <i class="bi bi-people text-success fs-1 mb-2"></i>
+                <i class="bi bi-truck text-success fs-1 mb-2"></i>
+                <h5 class="fw-bold">Inventario Maquinaria</h5>
+                <p class="text-muted small">Catálogo e inventario de maquinaria industrial.</p>
+                <a th:href="@{/maquinarias}" class="btn btn-outline-success rounded-pill mt-auto">Administrar</a>
+            </div>
+        </div>
+
+        <!-- 2. Programación y calendario de mantenimiento preventivo -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-calendar-check text-warning fs-1 mb-2"></i>
+                <h5 class="fw-bold">Mantenimiento Preventivo</h5>
+                <p class="text-muted small">Programación y calendario de mantenimiento.</p>
+                <a th:href="@{/tipomantenimiento}" class="btn btn-outline-warning rounded-pill mt-auto">Programar</a>
+            </div>
+        </div>
+
+        <!-- 3. Alertas y ordenes de trabajo por imprevistos/correctivos -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-exclamation-triangle text-danger fs-1 mb-2"></i>
+                <h5 class="fw-bold">Alertas e Incidencias</h5>
+                <p class="text-muted small">Alertas y órdenes por imprevistos o correctivos.</p>
+                <a th:href="@{/incidencias}" class="btn btn-outline-danger rounded-pill mt-auto">Gestionar</a>
+            </div>
+        </div>
+
+        <!-- 4. Gestión de usuarios y roles -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-people-fill text-primary fs-1 mb-2"></i>
                 <h5 class="fw-bold">Gestión de Usuarios</h5>
-                <p class="text-muted small">Crear, editar, desactivar y asignar roles a los empleados.</p>
-                <a th:href="@{/usuarios}" class="btn btn-outline-success rounded-pill mt-auto">Administrar Usuarios</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <i class="bi bi-bell text-danger fs-1 mb-2"></i>
-                <h5 class="fw-bold">Alertas del Sistema</h5>
-                <p class="text-muted small">Notificaciones y alertas programadas.</p>
-                <a th:href="@{/alertas}" class="btn btn-outline-danger rounded-pill mt-auto">Abrir Alertas</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <i class="bi bi-tools text-info fs-1 mb-2"></i>
-                <h5 class="fw-bold">Tipos de Mantenimiento</h5>
-                <p class="text-muted small">Ajuste de parámetros y categorías.</p>
-                <a th:href="@{/tipomantenimiento}" class="btn btn-outline-info rounded-pill mt-auto">Configurar</a>
+                <p class="text-muted small">Técnicos, supervisores y operadores.</p>
+                <a th:href="@{/usuarios}" class="btn btn-outline-primary rounded-pill mt-auto">Administrar</a>
             </div>
         </div>
     </div>

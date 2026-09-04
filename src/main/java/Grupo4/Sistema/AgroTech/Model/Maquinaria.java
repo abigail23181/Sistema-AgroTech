@@ -25,7 +25,6 @@ public class Maquinaria {
 
     private String estado;
 
-   
     @NotNull(message = "Debe asignar una empresa")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_empresa", nullable = false)
@@ -33,40 +32,88 @@ public class Maquinaria {
 
     public Maquinaria() {}
 
-    // Getters y Setters...
-
-    public Empresa getEmpresa() { 
-        return empresa; 
+    public Maquinaria(String nombre, String marca, String modelo, Integer anio, String numeroSerie, String estado, Empresa empresa) {
+        this.nombre = nombre;
+        this.marca = marca;
+        this.modelo = modelo;
+        this.anio = anio;
+        this.numeroSerie = numeroSerie;
+        this.estado = estado;
+        this.empresa = empresa;
     }
 
-<<<<<<< Updated upstream
-    public void setEmpresa(Empresa empresa) { 
-        this.empresa = empresa; 
-=======
-    public Long getIdMaquinaria() { return idMaquinaria; }
-    public void setIdMaquinaria(Long idMaquinaria) { this.idMaquinaria = idMaquinaria; }
+    // --- GETTERS Y SETTERS ---
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public Long getIdMaquinaria() {
+        return idMaquinaria;
+    }
 
-    public String getModelo() { return modelo; }
-    public void setModelo(String modelo) { this.modelo = modelo; }
+    public void setIdMaquinaria(Long idMaquinaria) {
+        this.idMaquinaria = idMaquinaria;
+    }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-
-    public Empresa getEmpresa() { return empresa; }
-    public void setEmpresa(Empresa empresa) { this.empresa = empresa; }
-
+    // Alias de conveniencia para compatibilidad con Incidencia (getId() / setId())
     public Long getId() {
-        return 0L;
+        return idMaquinaria;
     }
 
-    public void setId(Long maquinaId) {
+    public void setId(Long id) {
+        this.idMaquinaria = id;
     }
 
-    public String getUbicacion() {
-        return "";
->>>>>>> Stashed changes
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public Integer getAnio() {
+        return anio;
+    }
+
+    public void setAnio(Integer anio) {
+        this.anio = anio;
+    }
+
+    public String getNumeroSerie() {
+        return numeroSerie;
+    }
+
+    public void setNumeroSerie(String numeroSerie) {
+        this.numeroSerie = numeroSerie;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
     }
 }

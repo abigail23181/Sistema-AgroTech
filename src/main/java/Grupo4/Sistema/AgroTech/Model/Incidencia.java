@@ -1,12 +1,8 @@
 package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
-<<<<<<< Updated upstream
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDate;
-=======
 import java.time.LocalDateTime;
->>>>>>> Stashed changes
 
 @Entity
 public class Incidencia {
@@ -15,44 +11,43 @@ public class Incidencia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-<<<<<<< Updated upstream
-    @NotBlank(message = "La severidad es obligatoria")
-    private String severidad;
-
-    private LocalDate fecha;
-
-    @NotBlank(message = "La ubicación es obligatoria")
-    private String ubicacion;
-
-    private String estado;
-
-    public Incidencia() {}
-
-    public Incidencia(String severidad, LocalDate fecha, String ubicacion, String estado) {
-        this.severidad = severidad;
-        this.fecha = fecha;
-        this.ubicacion = ubicacion;
-        this.estado = estado;
-    }
-
-    // Getters y Setters
-=======
-    // cascade MERGE/PERSIST para evitar el error TransientPropertyValueException
+    // Relación con Maquinaria (evita el error TransientPropertyValueException)
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "maquina_id", nullable = true)
     private Maquinaria maquina;
 
     private String tipoFalla;
+
+    @NotBlank(message = "La severidad es obligatoria")
     private String severidad;
+
     private String descripcion;
+
     private LocalDateTime fechaHora;
+
+    @NotBlank(message = "La ubicación es obligatoria")
     private String ubicacion;
+
     private String tipoMantenimientoCorrectivo;
+
     private String estado = "PENDIENTE";
 
     public Incidencia() {}
 
->>>>>>> Stashed changes
+    public Incidencia(Maquinaria maquina, String tipoFalla, String severidad, String descripcion,
+                      LocalDateTime fechaHora, String ubicacion, String tipoMantenimientoCorrectivo, String estado) {
+        this.maquina = maquina;
+        this.tipoFalla = tipoFalla;
+        this.severidad = severidad;
+        this.descripcion = descripcion;
+        this.fechaHora = fechaHora;
+        this.ubicacion = ubicacion;
+        this.tipoMantenimientoCorrectivo = tipoMantenimientoCorrectivo;
+        this.estado = (estado != null) ? estado : "PENDIENTE";
+    }
+
+    // --- GETTERS Y SETTERS ---
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -1,46 +1,47 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
+import Grupo4.Sistema.AgroTech.Model.Acceso;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IEmpresaService;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IMaquinariaService;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IIncidenciaService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
 
-<<<<<<< Updated upstream
-    @GetMapping({"/", "/home"})
-    public String index() {
-=======
-    private final IEmpresaService empresaService;
-    private final IMaquinariaService maquinariaService;
-    private final IUsuariosService usuarioService;
-    private final IAlertaService alertaService;
-    private final IncidenciaService incidenciaService;
+    @Autowired(required = false)
+    private IEmpresaService empresaService;
 
-    public HomeController(IEmpresaService empresaService,
-                          IMaquinariaService maquinariaService,
-                          IUsuariosService usuarioService,
-                          IAlertaService alertaService,
-                          IncidenciaService incidenciaService) {
-        this.empresaService = empresaService;
-        this.maquinariaService = maquinariaService;
-        this.usuarioService = usuarioService;
-        this.alertaService = alertaService;
-        this.incidenciaService = incidenciaService;
-    }
+    @Autowired(required = false)
+    private IMaquinariaService maquinariaService;
 
-    // Se cambia la ruta a "/home" para evitar duplicidad con AccesoController
-    @GetMapping("/home")
-    public String index(HttpSession session, Model model) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
+    @Autowired(required = false)
+    private IIncidenciaService incidenciaService;
+
+    @GetMapping({"/dashboard", "/home"})
+    public String dashboard(HttpSession session, Model model) {
+        Acceso acceso = (Acceso) session.getAttribute("accesoLogueado");
+
+        // Si no se ha iniciado sesión en Acceso, redirige al login
+        if (acceso == null) {
+            return "redirect:/acceso";
         }
 
-        model.addAttribute("empresas", empresaService.listarTodas());
-        model.addAttribute("maquinarias", maquinariaService.listarTodas());
-        model.addAttribute("usuarios", usuarioService.listarTodos());
-        model.addAttribute("alertas", alertaService.listarTodas());
-        model.addAttribute("incidencias", incidenciaService.obtenerTodas());
->>>>>>> Stashed changes
-        return "index";
+        // Carga de listas/contadores para el Dashboard (con validación de nulos)
+        if (empresaService != null) {
+            model.addAttribute("empresas", empresaService.listarTodas());
+        }
+        if (maquinariaService != null) {
+            model.addAttribute("maquinarias", maquinariaService.listarTodas());
+        }
+        if (incidenciaService != null) {
+            model.addAttribute("incidencias", incidenciaService.obtenerTodas());
+        }
+
+        return "dashboard";
     }
 }
