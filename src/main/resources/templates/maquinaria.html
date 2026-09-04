@@ -4,14 +4,12 @@
       layout:decorate="~{layouts/_mainLayout}">
 <head>
     <title>Inventario de Maquinaria | AgroTech</title>
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 <div layout:fragment="content">
     <div class="container-fluid py-4">
 
-        <!-- Encabezado de la Sección -->
         <div class="row mb-4 align-items-center">
             <div class="col-md-8">
                 <div class="d-flex align-items-center gap-3">
@@ -31,7 +29,6 @@
             </div>
         </div>
 
-        <!-- Alerta de Notificación -->
         <div th:if="${mensaje}"
              th:class="'alert alert-' + ${tipoMensaje} + ' alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4'"
              role="alert">
@@ -40,7 +37,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <!-- Tarjeta Principal con Tabla -->
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
             <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
@@ -63,7 +59,6 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- Listado dinámico -->
                         <tr th:each="m : ${lista}">
                             <td class="ps-4">
                                 <div class="fw-bold text-dark" th:text="${m.codigoInterno}">MAQ-001</div>
@@ -92,8 +87,8 @@
                                 <span th:if="${m.estado == 'Operativa'}" class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-semibold">
                                     <i class="bi bi-check-circle me-1"></i>Operativa
                                 </span>
-                                <span th:if="${m.estado == 'En Mantenimiento'}" class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-semibold">
-                                    <i class="bi bi-wrench me-1"></i>En Mantenimiento
+                                <span th:if="${m.estado == 'En Taller'}" class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-wrench me-1"></i>En Taller
                                 </span>
                                 <span th:if="${m.estado == 'Fuera de Servicio'}" class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-semibold">
                                     <i class="bi bi-x-circle me-1"></i>Fuera de Servicio
@@ -101,7 +96,6 @@
                             </td>
 
                             <td class="text-end pe-4">
-                                <!-- Botón Generar QR -->
                                 <button class="btn btn-light btn-sm rounded-circle me-1 shadow-sm text-dark"
                                         title="Ver Código QR"
                                         data-bs-toggle="modal"
@@ -109,7 +103,6 @@
                                     <i class="bi bi-qr-code"></i>
                                 </button>
 
-                                <!-- Botón Editar -->
                                 <button class="btn btn-light btn-sm rounded-circle me-1 shadow-sm text-primary"
                                         title="Editar"
                                         data-bs-toggle="modal"
@@ -117,7 +110,6 @@
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
 
-                                <!-- Botón Eliminar -->
                                 <button class="btn btn-light btn-sm rounded-circle shadow-sm text-danger"
                                         title="Eliminar"
                                         data-bs-toggle="modal"
@@ -125,20 +117,33 @@
                                     <i class="bi bi-trash3-fill"></i>
                                 </button>
 
-                                <!-- MODAL MOSTRAR CÓDIGO QR -->
+
                                 <div class="modal fade text-start" th:id="'modalQR-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered modal-sm">
                                         <div class="modal-content border-0 shadow-lg rounded-4 text-center">
                                             <div class="modal-header border-0 pb-0 pt-4 px-4">
-                                                <h5 class="modal-title fw-bold text-dark w-100">Código QR</h5>
+                                                <h5 class="modal-title fw-bold text-dark w-100">Código QR Ficha Técnica</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body p-4">
-                                                <!-- Generador de QR dinámico -->
-                                                <img th:src="'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + ${m.codigoInterno}"
-                                                     alt="Código QR" class="img-fluid rounded-3 border p-2 mb-3">
+                                                <img th:src="'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + ${
+                                                    '--- FICHA TECNICA ---' + '%0A' +
+                                                    'EQUIPO: ' + m.nombre + '%0A' +
+                                                    'CODIGO: ' + m.codigoInterno + '%0A' +
+                                                    'MODELO: ' + (m.modelo != null ? m.modelo : 'N/A') + '%0A' +
+                                                    'SERIE: ' + (m.numeroSerie != null ? m.numeroSerie : 'N/A') + '%0A' +
+                                                    'HOROMETRO: ' + (m.horometroInicial != null ? m.horometroInicial + ' hrs' : '0 hrs') + '%0A' +
+                                                    'UBICACION: ' + (m.ubicacion != null ? m.ubicacion : 'N/A') + '%0A' +
+                                                    'RESPONSABLE: ' + (m.responsableTecnico != null ? m.responsableTecnico : 'N/A') + '%0A' +
+                                                    'ESTADO: ' + m.estado
+                                                }"
+                                                     alt="Código QR Ficha" class="img-fluid rounded-3 border p-2 mb-3 shadow-sm">
+
                                                 <h6 class="fw-bold text-dark mb-0" th:text="${m.nombre}">Nombre</h6>
                                                 <span class="badge bg-light text-muted border font-monospace mt-1" th:text="${m.codigoInterno}">MAQ-001</span>
+                                                <p class="text-muted small mt-2 mb-0">
+                                                    <i class="bi bi-file-text me-1"></i>Muestra la información directamente al escanear
+                                                </p>
                                             </div>
                                             <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
                                                 <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cerrar</button>
@@ -150,7 +155,6 @@
                                     </div>
                                 </div>
 
-                                <!-- MODAL EDITAR -->
                                 <div class="modal fade text-start" th:id="'modalEditar-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered modal-lg">
                                         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -227,7 +231,7 @@
                                                             <span class="input-group-text bg-light border-end-0"><i class="bi bi-toggle-on text-muted"></i></span>
                                                             <select name="estado" class="form-select border-start-0">
                                                                 <option value="Operativa" th:selected="${m.estado == 'Operativa'}">Operativa</option>
-                                                                <option value="En Mantenimiento" th:selected="${m.estado == 'En Mantenimiento'}">En Mantenimiento</option>
+                                                                <option value="En Taller" th:selected="${m.estado == 'En Taller'}">En Taller</option>
                                                                 <option value="Fuera de Servicio" th:selected="${m.estado == 'Fuera de Servicio'}">Fuera de Servicio</option>
                                                             </select>
                                                         </div>
@@ -242,7 +246,6 @@
                                     </div>
                                 </div>
 
-                                <!-- MODAL ELIMINAR -->
                                 <div class="modal fade text-start" th:id="'modalEliminar-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered modal-sm">
                                         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -251,11 +254,13 @@
                                                     <i class="bi bi-exclamation-triangle-fill fs-2"></i>
                                                 </div>
                                                 <h5 class="fw-bold text-dark mb-1">¿Eliminar Maquinaria?</h5>
-                                                <p class="text-muted small mb-0">Esta acción no se podrá deshacer.</p>
+                                                <p class="text-muted small mb-2">Esta acción no se podrá deshacer.</p>
+                                                <span class="badge bg-light text-dark border font-monospace" th:text="${m.codigoInterno} + ' - ' + ${m.nombre}">MAQ-001</span>
                                             </div>
                                             <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
                                                 <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
                                                 <form th:action="@{/maquinarias/eliminar}" method="post" class="d-inline">
+
                                                     <input type="hidden" name="id" th:value="${m.idMaquinaria}">
                                                     <button type="submit" class="btn btn-danger rounded-3 px-4">Sí, eliminar</button>
                                                 </form>
@@ -267,7 +272,6 @@
                             </td>
                         </tr>
 
-                        <!-- En caso de que no haya registros -->
                         <tr th:if="${#lists.isEmpty(lista)}">
                             <td colspan="6" class="text-center py-5">
                                 <div class="py-3">
@@ -284,7 +288,6 @@
         </div>
     </div>
 
-    <!-- MODAL CREAR NUEVA MAQUINARIA -->
     <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg rounded-4">
@@ -293,7 +296,7 @@
 
                     <div class="modal-header border-0 pb-0 pt-4 px-4">
                         <h5 class="modal-title fw-bold text-dark">
-                            <i class="bi bi-plus-circle-fill text-primary me-2"></i>Registrar Nueva Maquinaria
+                            <i class="bi bi-plus-circle-fill text-primary me-2"></i> Nueva Maquinaria
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -360,7 +363,7 @@
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-toggle-on text-muted"></i></span>
                                 <select name="estado" class="form-select border-start-0">
                                     <option value="Operativa" selected>Operativa</option>
-                                    <option value="En Mantenimiento">En Mantenimiento</option>
+                                    <option value="En Mantenimiento">En Taller</option>
                                     <option value="Fuera de Servicio">Fuera de Servicio</option>
                                 </select>
                             </div>

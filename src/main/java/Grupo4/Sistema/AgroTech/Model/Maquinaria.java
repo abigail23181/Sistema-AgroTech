@@ -45,7 +45,7 @@ public class Maquinaria {
     public Maquinaria() {
     }
 
-    // Getters y Setters completos
+
     public Long getIdMaquinaria() {
         return idMaquinaria;
     }

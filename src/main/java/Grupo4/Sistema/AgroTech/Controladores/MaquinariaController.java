@@ -28,12 +28,10 @@ public class MaquinariaController {
     @PostMapping("/guardar")
     public String guardarMaquinaria(@ModelAttribute Maquinaria maquinaria, RedirectAttributes redirect) {
         try {
-            // Asigna idEmpresa por defecto si no se especifica
             if (maquinaria.getIdEmpresa() == null) {
                 maquinaria.setIdEmpresa(1L);
             }
 
-            // Genera código interno automáticamente si viene vacío
             if (maquinaria.getCodigoInterno() == null || maquinaria.getCodigoInterno().trim().isEmpty()) {
                 String codigoAuto = "MAQ-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase();
                 maquinaria.setCodigoInterno(codigoAuto);
@@ -49,7 +47,6 @@ public class MaquinariaController {
         return "redirect:/maquinarias";
     }
 
-    // Eliminar por ID
     @PostMapping("/eliminar")
     public String eliminarMaquinaria(@RequestParam("id") Long id, RedirectAttributes redirect) {
         try {

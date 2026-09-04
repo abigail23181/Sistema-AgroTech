@@ -13,13 +13,11 @@ public class TipoMantenimiento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // CA03: Campo obligatorio | CA04: Nombre único
     @NotBlank(message = "El nombre del tipo de mantenimiento es obligatorio.")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres.")
     @Column(nullable = false, unique = true, length = 100)
     private String nombre;
 
-    // CA02: Clasificación obligatoria (preventivo/correctivo)
     @NotBlank(message = "Debe seleccionar una categoría (preventivo o correctivo).")
     @Column(nullable = false, length = 20)
     private String categoria;
@@ -27,7 +25,6 @@ public class TipoMantenimiento {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    // CA07: Estado activo/inactivo
     @Column(nullable = false)
     private Boolean activo = true;
 
@@ -41,7 +38,6 @@ public class TipoMantenimiento {
         this.activo = activo;
     }
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -27,7 +27,6 @@ public class TipoMantenimientoController {
         return "tipomantenimiento";
     }
 
-    // CA01, CA02, CA03, CA04: Guardar nuevo registro con validación
     @PostMapping("/guardar")
     public String guardar(@Valid @ModelAttribute("tipoMantenimiento") TipoMantenimiento tipoMantenimiento,
                           BindingResult result,
@@ -61,7 +60,7 @@ public class TipoMantenimientoController {
 
         if (tipoMantenimiento.getNombre() != null && !tipoMantenimiento.getNombre().isBlank()) {
             TipoMantenimiento existente = tipoMantenimientoService.obtenerPorId(tipoMantenimiento.getId());
-            // Si cambió el nombre, se valida si el nuevo ya existe
+
             if (existente != null && !existente.getNombre().equalsIgnoreCase(tipoMantenimiento.getNombre().trim())) {
                 if (tipoMantenimientoService.existePorNombre(tipoMantenimiento.getNombre().trim())) {
                     result.rejectValue("nombre", "error.nombre", "Ya existe un tipo de mantenimiento con este nombre.");
