@@ -39,7 +39,34 @@ public class Maquinaria {
         return empresa; 
     }
 
+<<<<<<< Updated upstream
     public void setEmpresa(Empresa empresa) { 
         this.empresa = empresa; 
+=======
+    public Long getIdMaquinaria() { return idMaquinaria; }
+    public void setIdMaquinaria(Long idMaquinaria) { this.idMaquinaria = idMaquinaria; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getModelo() { return modelo; }
+    public void setModelo(String modelo) { this.modelo = modelo; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+
+    public Empresa getEmpresa() { return empresa; }
+    public void setEmpresa(Empresa empresa) { this.empresa = empresa; }
+
+    public Long getId() {
+        return 0L;
+    }
+
+    public void setId(Long maquinaId) {
+    }
+
+    public String getUbicacion() {
+        return "";
+>>>>>>> Stashed changes
     }
 }
