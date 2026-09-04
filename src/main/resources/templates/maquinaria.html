@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/_mainLayout}">
 <head>
-    <title>Gestión de Maquinarias | AgroTech</title>
+    <title>Inventario de Maquinaria | AgroTech</title>
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -11,16 +11,16 @@
 <div layout:fragment="content">
     <div class="container-fluid py-4">
 
-        <!-- Banner de Encabezado -->
+        <!-- Encabezado de la Sección -->
         <div class="row mb-4 align-items-center">
             <div class="col-md-8">
                 <div class="d-flex align-items-center gap-3">
                     <div class="bg-primary bg-opacity-10 p-3 rounded-4 text-primary">
-                        <i class="bi bi-gear-wide-connected fs-2"></i>
+                        <i class="bi bi-truck-front-fill fs-2"></i>
                     </div>
                     <div>
-                        <h3 class="fw-bold mb-0 text-dark">Gestión de Maquinarias</h3>
-                        <p class="text-muted small mb-0">Administra la flota de equipos y maquinaria agrícola registrada.</p>
+                        <h3 class="fw-bold mb-0 text-dark">Inventario de Maquinaria</h3>
+                        <p class="text-muted small mb-0">Control centralizado de equipos, horómetros, responsables y códigos QR.</p>
                     </div>
                 </div>
             </div>
@@ -31,21 +31,21 @@
             </div>
         </div>
 
-        <!-- Alerta de Notificación Desechable -->
+        <!-- Alerta de Notificación -->
         <div th:if="${mensaje}"
-             th:classappend="'alert-' + ${tipoMensaje != null ? tipoMensaje : 'success'}"
-             class="alert alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
-            <i class="bi bi-check-circle-fill me-2" th:if="${tipoMensaje == 'success' || tipoMensaje == null}"></i>
-            <i class="bi bi-exclamation-triangle-fill me-2" th:if="${tipoMensaje == 'danger'}"></i>
-            <span th:text="${mensaje}" class="fw-semibold">¡Operación realizada con éxito!</span>
+             th:class="'alert alert-' + ${tipoMensaje} + ' alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4'"
+             role="alert">
+            <i th:class="${tipoMensaje == 'danger'} ? 'bi bi-exclamation-triangle-fill me-2' : 'bi bi-check-circle-fill me-2'"></i>
+            <span th:text="${mensaje}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <!-- Tarjeta Principal / Tabla -->
+        <!-- Tarjeta Principal con Tabla -->
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
             <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
                 <span class="text-muted small font-monospace">
-                    TOTAL DE EQUIPOS: <strong class="text-dark" th:text="${#lists.size(maquinarias)}">0</strong>
+                    TOTAL REGISTRADOS: <strong class="text-dark" th:text="${#lists.size(lista)}">0</strong>
                 </span>
             </div>
 
@@ -54,64 +54,226 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light text-secondary text-uppercase small font-weight-bold">
                         <tr>
-                            <th class="py-3 ps-4">ID</th>
+                            <th class="py-3 ps-4">Código / Serie</th>
                             <th class="py-3">Maquinaria</th>
-                            <th class="py-3">Modelo</th>
-                            <th class="py-3">Empresa Perteneciente</th>
+                            <th class="py-3">Horómetro / Fecha</th>
+                            <th class="py-3">Ubicación / Responsable</th>
                             <th class="py-3">Estado</th>
                             <th class="py-3 text-end pe-4">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="m : ${maquinarias}">
-                            <td class="ps-4 fw-bold text-muted" th:text="'#' + ${m.idMaquinaria}">#1</td>
+                        <!-- Listado dinámico -->
+                        <tr th:each="m : ${lista}">
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark" th:text="${m.codigoInterno}">MAQ-001</div>
+                                <small class="text-muted" th:text="${m.numeroSerie != null ? 'S/N: ' + m.numeroSerie : 'S/N: N/A'}">S/N: 12345</small>
+                            </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="rounded-circle bg-light p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                        <i class="bi bi-truck text-primary"></i>
+                                        <i class="bi bi-gear-fill text-primary"></i>
                                     </div>
-                                    <span class="fw-semibold text-dark" th:text="${m.nombre}">Tractor John Deere</span>
+                                    <div>
+                                        <span class="fw-semibold text-dark d-block" th:text="${m.nombre}">Tractor Agrícola</span>
+                                        <small class="text-muted" th:text="${m.modelo}">John Deere 6125M</small>
+                                    </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark border font-monospace px-2 py-1" th:text="${m.modelo}">6120M</span>
+                                <div class="fw-semibold text-dark" th:text="${m.horometroInicial != null ? m.horometroInicial + ' hrs' : '0.0 hrs'}">0.0 hrs</div>
+                                <small class="text-muted" th:text="${m.fechaAdquisicion}">2026-01-01</small>
                             </td>
                             <td>
-                                <span class="text-muted small">
-                                    <i class="bi bi-building me-1 text-secondary"></i>
-                                    <span th:text="${m.empresa != null ? m.empresa.nombre : 'Sin Empresa'}">AgroCorp</span>
+                                <div class="text-dark fw-semibold" th:text="${m.ubicacion != null ? m.ubicacion : 'Sin asignar'}">Lote A</div>
+                                <small class="text-muted" th:text="${m.responsableTecnico != null ? m.responsableTecnico : 'Sin asignar'}">Juan Pérez</small>
+                            </td>
+                            <td>
+                                <span th:if="${m.estado == 'Operativa'}" class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-check-circle me-1"></i>Operativa
+                                </span>
+                                <span th:if="${m.estado == 'En Mantenimiento'}" class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-wrench me-1"></i>En Mantenimiento
+                                </span>
+                                <span th:if="${m.estado == 'Fuera de Servicio'}" class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-x-circle me-1"></i>Fuera de Servicio
                                 </span>
                             </td>
-                            <td>
-                                <span class="badge rounded-pill px-3 py-2 fw-semibold"
-                                      th:classappend="${m.estado == 'Operativo' ? 'bg-success bg-opacity-10 text-success' : (m.estado == 'En Mantenimiento' ? 'bg-warning bg-opacity-10 text-warning border border-warning' : 'bg-danger bg-opacity-10 text-danger')}"
-                                      th:text="${m.estado}">Operativo</span>
-                            </td>
 
-                            <!-- Botones de Acción -->
                             <td class="text-end pe-4">
+                                <!-- Botón Generar QR -->
+                                <button class="btn btn-light btn-sm rounded-circle me-1 shadow-sm text-dark"
+                                        title="Ver Código QR"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#modalQR-' + ${m.idMaquinaria}">
+                                    <i class="bi bi-qr-code"></i>
+                                </button>
+
+                                <!-- Botón Editar -->
                                 <button class="btn btn-light btn-sm rounded-circle me-1 shadow-sm text-primary"
                                         title="Editar"
                                         data-bs-toggle="modal"
                                         th:data-bs-target="'#modalEditar-' + ${m.idMaquinaria}">
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
+
+                                <!-- Botón Eliminar -->
                                 <button class="btn btn-light btn-sm rounded-circle shadow-sm text-danger"
                                         title="Eliminar"
                                         data-bs-toggle="modal"
                                         th:data-bs-target="'#modalEliminar-' + ${m.idMaquinaria}">
                                     <i class="bi bi-trash3-fill"></i>
                                 </button>
+
+                                <!-- MODAL MOSTRAR CÓDIGO QR -->
+                                <div class="modal fade text-start" th:id="'modalQR-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content border-0 shadow-lg rounded-4 text-center">
+                                            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                                                <h5 class="modal-title fw-bold text-dark w-100">Código QR</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <!-- Generador de QR dinámico -->
+                                                <img th:src="'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + ${m.codigoInterno}"
+                                                     alt="Código QR" class="img-fluid rounded-3 border p-2 mb-3">
+                                                <h6 class="fw-bold text-dark mb-0" th:text="${m.nombre}">Nombre</h6>
+                                                <span class="badge bg-light text-muted border font-monospace mt-1" th:text="${m.codigoInterno}">MAQ-001</span>
+                                            </div>
+                                            <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                                                <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cerrar</button>
+                                                <button type="button" class="btn btn-primary rounded-3 px-3" onclick="window.print()">
+                                                    <i class="bi bi-printer me-1"></i>Imprimir
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL EDITAR -->
+                                <div class="modal fade text-start" th:id="'modalEditar-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content border-0 shadow-lg rounded-4">
+                                            <form th:action="@{/maquinarias/guardar}" method="post">
+                                                <input type="hidden" name="idMaquinaria" th:value="${m.idMaquinaria}">
+                                                <input type="hidden" name="idEmpresa" th:value="${m.idEmpresa != null ? m.idEmpresa : 1}">
+
+                                                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                                                    <h5 class="modal-title fw-bold text-dark">
+                                                        <i class="bi bi-pencil-square text-primary me-2"></i>Editar Maquinaria
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body p-4 row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Código Interno *</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-barcode text-muted"></i></span>
+                                                            <input type="text" name="codigoInterno" class="form-control border-start-0" th:value="${m.codigoInterno}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Número de Serie</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-hash text-muted"></i></span>
+                                                            <input type="text" name="numeroSerie" class="form-control border-start-0" th:value="${m.numeroSerie}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Nombre / Tipo *</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-truck-front text-muted"></i></span>
+                                                            <input type="text" name="nombre" class="form-control border-start-0" th:value="${m.nombre}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Modelo / Marca</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-tag text-muted"></i></span>
+                                                            <input type="text" name="modelo" class="form-control border-start-0" th:value="${m.modelo}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Horómetro Inicial</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-speedometer2 text-muted"></i></span>
+                                                            <input type="number" step="0.1" name="horometroInicial" class="form-control border-start-0" th:value="${m.horometroInicial}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Fecha de Adquisición</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-calendar-event text-muted"></i></span>
+                                                            <input type="date" name="fechaAdquisicion" class="form-control border-start-0" th:value="${m.fechaAdquisicion}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Ubicación Actual</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                                                            <input type="text" name="ubicacion" class="form-control border-start-0" th:value="${m.ubicacion}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label small fw-bold text-secondary">Responsable Técnico</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                                                            <input type="text" name="responsableTecnico" class="form-control border-start-0" th:value="${m.responsableTecnico}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label class="form-label small fw-bold text-secondary">Estado *</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-toggle-on text-muted"></i></span>
+                                                            <select name="estado" class="form-select border-start-0">
+                                                                <option value="Operativa" th:selected="${m.estado == 'Operativa'}">Operativa</option>
+                                                                <option value="En Mantenimiento" th:selected="${m.estado == 'En Mantenimiento'}">En Mantenimiento</option>
+                                                                <option value="Fuera de Servicio" th:selected="${m.estado == 'Fuera de Servicio'}">Fuera de Servicio</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                                                    <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Cambios</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODAL ELIMINAR -->
+                                <div class="modal fade text-start" th:id="'modalEliminar-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content border-0 shadow-lg rounded-4">
+                                            <div class="modal-body text-center p-4">
+                                                <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex p-3 mb-3">
+                                                    <i class="bi bi-exclamation-triangle-fill fs-2"></i>
+                                                </div>
+                                                <h5 class="fw-bold text-dark mb-1">¿Eliminar Maquinaria?</h5>
+                                                <p class="text-muted small mb-0">Esta acción no se podrá deshacer.</p>
+                                            </div>
+                                            <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                                                <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
+                                                <form th:action="@{/maquinarias/eliminar}" method="post" class="d-inline">
+                                                    <input type="hidden" name="id" th:value="${m.idMaquinaria}">
+                                                    <button type="submit" class="btn btn-danger rounded-3 px-4">Sí, eliminar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </td>
                         </tr>
 
-                        <!-- Estado Vacío -->
-                        <tr th:if="${#lists.isEmpty(maquinarias)}">
+                        <!-- En caso de que no haya registros -->
+                        <tr th:if="${#lists.isEmpty(lista)}">
                             <td colspan="6" class="text-center py-5">
                                 <div class="py-3">
                                     <i class="bi bi-inbox text-muted display-4 d-block mb-2"></i>
                                     <h6 class="fw-bold text-secondary">No hay maquinarias registradas</h6>
-                                    <p class="text-muted small">Agrega un nuevo equipo presionando el botón superior.</p>
+                                    <p class="text-muted small">Comienza agregando un nuevo registro con el botón superior.</p>
                                 </div>
                             </td>
                         </tr>
@@ -122,153 +284,91 @@
         </div>
     </div>
 
-    <!-- MODALES DE EDICIÓN Y ELIMINACIÓN -->
-    <div th:each="m : ${maquinarias}">
-        <!-- MODAL EDITAR -->
-        <div class="modal fade text-start" th:id="'modalEditar-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <form th:action="@{/maquinaria/editar}" method="post">
-                        <div class="modal-header border-0 pb-0 pt-4 px-4">
-                            <h5 class="modal-title fw-bold text-dark">
-                                <i class="bi bi-pencil-square text-primary me-2"></i>Editar Maquinaria
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body p-4">
-                            <input type="hidden" name="idMaquinaria" th:value="${m.idMaquinaria}">
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold text-secondary">Nombre del Equipo</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-truck text-muted"></i></span>
-                                    <input type="text" name="nombre" class="form-control border-start-0" th:value="${m.nombre}" required>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label small fw-bold text-secondary">Modelo / Referencia</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-hash text-muted"></i></span>
-                                    <input type="text" name="modelo" class="form-control border-start-0" th:value="${m.modelo}" required>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label small fw-bold text-secondary">Empresa</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-building text-muted"></i></span>
-                                        <select name="empresa.idEmpresa" class="form-select border-start-0" required>
-                                            <option th:each="emp : ${empresas}"
-                                                    th:value="${emp.idEmpresa}"
-                                                    th:text="${emp.nombre}"
-                                                    th:selected="${m.empresa != null and m.empresa.idEmpresa == emp.idEmpresa}"></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label small fw-bold text-secondary">Estado Operativo</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-activity text-muted"></i></span>
-                                        <select name="estado" class="form-select border-start-0" required>
-                                            <option value="Operativo" th:selected="${m.estado == 'Operativo'}">Operativo</option>
-                                            <option value="En Mantenimiento" th:selected="${m.estado == 'En Mantenimiento'}">En Mantenimiento</option>
-                                            <option value="Inactivo" th:selected="${m.estado == 'Inactivo'}">Inactivo</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0 pt-0 pb-4 px-4">
-                            <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Cambios</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL ELIMINAR -->
-        <div class="modal fade text-start" th:id="'modalEliminar-' + ${m.idMaquinaria}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <form th:action="@{/maquinaria/eliminar}" method="post">
-                        <input type="hidden" name="id" th:value="${m.idMaquinaria}">
-                        <div class="modal-body text-center p-4">
-                            <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex p-3 mb-3">
-                                <i class="bi bi-exclamation-triangle-fill fs-2"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-1">¿Eliminar Maquinaria?</h5>
-                            <p class="text-muted small mb-0">Esta acción no se podrá deshacer.</p>
-                        </div>
-                        <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
-                            <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-danger rounded-3 px-4">Sí, eliminar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CREAR -->
+    <!-- MODAL CREAR NUEVA MAQUINARIA -->
     <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg rounded-4">
-                <form th:action="@{/maquinaria/guardar}" method="post">
+                <form th:action="@{/maquinarias/guardar}" method="post">
+                    <input type="hidden" name="idEmpresa" value="1">
+
                     <div class="modal-header border-0 pb-0 pt-4 px-4">
                         <h5 class="modal-title fw-bold text-dark">
-                            <i class="bi bi-plus-circle-fill text-primary me-2"></i>Nueva Maquinaria
+                            <i class="bi bi-plus-circle-fill text-primary me-2"></i>Registrar Nueva Maquinaria
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body p-4">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-secondary">Nombre del Equipo</label>
+                    <div class="modal-body p-4 row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Código Interno</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-truck text-muted"></i></span>
-                                <input type="text" name="nombre" class="form-control border-start-0" placeholder="Ej: Cosechadora GreenStar" required>
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-barcode text-muted"></i></span>
+                                <input type="text" name="codigoInterno" class="form-control border-start-0" placeholder="Ej: MAQ-001 (Opcional)">
                             </div>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-secondary">Modelo / Referencia</label>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Número de Serie</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-hash text-muted"></i></span>
-                                <input type="text" name="modelo" class="form-control border-start-0" placeholder="Ej: X9 1100" required>
+                                <input type="text" name="numeroSerie" class="form-control border-start-0" placeholder="S/N del fabricante">
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold text-secondary">Empresa</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-building text-muted"></i></span>
-                                    <select name="empresa.idEmpresa" class="form-select border-start-0" required>
-                                        <option value="" disabled selected>-- Seleccionar --</option>
-                                        <option th:each="emp : ${empresas}"
-                                                th:value="${emp.idEmpresa}"
-                                                th:text="${emp.nombre}"></option>
-                                    </select>
-                                </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Nombre / Tipo *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-truck-front text-muted"></i></span>
+                                <input type="text" name="nombre" class="form-control border-start-0" placeholder="Ej: Tractor Agrícola" required>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold text-secondary">Estado Inicial</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-activity text-muted"></i></span>
-                                    <select name="estado" class="form-select border-start-0" required>
-                                        <option value="Operativo" selected>Operativo</option>
-                                        <option value="En Mantenimiento">En Mantenimiento</option>
-                                        <option value="Inactivo">Inactivo</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Modelo / Marca</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-tag text-muted"></i></span>
+                                <input type="text" name="modelo" class="form-control border-start-0" placeholder="Ej: John Deere 6125M">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Horómetro Inicial</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-speedometer2 text-muted"></i></span>
+                                <input type="number" step="0.1" name="horometroInicial" class="form-control border-start-0" placeholder="0.0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Fecha de Adquisición</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-calendar-event text-muted"></i></span>
+                                <input type="date" name="fechaAdquisicion" class="form-control border-start-0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Ubicación Inicial</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                                <input type="text" name="ubicacion" class="form-control border-start-0" placeholder="Ej: Lote A, Galpón 2">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary">Responsable Técnico</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                                <input type="text" name="responsableTecnico" class="form-control border-start-0" placeholder="Ej: Juan Pérez">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-secondary">Estado *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-toggle-on text-muted"></i></span>
+                                <select name="estado" class="form-select border-start-0">
+                                    <option value="Operativa" selected>Operativa</option>
+                                    <option value="En Mantenimiento">En Mantenimiento</option>
+                                    <option value="Fuera de Servicio">Fuera de Servicio</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0 pt-0 pb-4 px-4">
                         <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Maquinaria</button>
+                        <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Registro</button>
                     </div>
                 </form>
             </div>
