@@ -1,10 +1,6 @@
 package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 
 @Entity
@@ -13,56 +9,59 @@ public class Alerta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @NotBlank(message = "La ubicación es obligatoria")
-    @Column(nullable = false, length = 150)
-    private String ubicacion;
-
-    @NotBlank(message = "El tipo de alerta es obligatorio")
-    @Column(nullable = false, length = 100)
+    // --- AGREGA ESTA LÍNEA ---
     private String tipo;
 
-    @NotNull(message = "La fecha límite es obligatoria")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "fecha_limite", nullable = false)
+    private String estado;
+
+    @Column(name = "fecha_limite")
     private LocalDate fechaLimite;
 
-    @NotBlank(message = "El estado es obligatorio")
-    @Column(nullable = false, length = 50)
-    private String estado = "Pendiente";
+    @Column(length = 1000)
+    private String observaciones;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_maquinaria", nullable = false)
+    @Column(name = "historial_mantenimientos", length = 1000)
+    private String historialMantenimientos;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "maquinaria_id")
     private Maquinaria maquinaria;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_mantenimiento_id")
+    private TipoMantenimiento tipoMantenimiento;
 
     public Alerta() {}
 
-    public Alerta(Long id, String ubicacion, String tipo, LocalDate fechaLimite, String estado, Maquinaria maquinaria) {
-        this.id = id;
-        this.ubicacion = ubicacion;
+    // --- AGREGA ESTOS MÉTODOS GETTER Y SETTER ---
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
         this.tipo = tipo;
-        this.fechaLimite = fechaLimite;
-        this.estado = estado;
-        this.maquinaria = maquinaria;
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getUbicacion() { return ubicacion; }
-    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
-
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
     public LocalDate getFechaLimite() { return fechaLimite; }
     public void setFechaLimite(LocalDate fechaLimite) { this.fechaLimite = fechaLimite; }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+
+    public String getHistorialMantenimientos() { return historialMantenimientos; }
+    public void setHistorialMantenimientos(String historialMantenimientos) { this.historialMantenimientos = historialMantenimientos; }
 
     public Maquinaria getMaquinaria() { return maquinaria; }
     public void setMaquinaria(Maquinaria maquinaria) { this.maquinaria = maquinaria; }
+
+    public TipoMantenimiento getTipoMantenimiento() { return tipoMantenimiento; }
+    public void setTipoMantenimiento(TipoMantenimiento tipoMantenimiento) { this.tipoMantenimiento = tipoMantenimiento; }
 }
