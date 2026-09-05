@@ -3,7 +3,6 @@ package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 import Grupo4.Sistema.AgroTech.Model.Empresa;
 import Grupo4.Sistema.AgroTech.Repositorios.EmpresaRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IEmpresaService;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,10 +31,5 @@ public class EmpresaServiceImpl implements IEmpresaService {
     @Transactional
     public void eliminar(Long id) {
         repository.deleteById(id);
-    }
-
-    @Override
-    public @Nullable Object listarTodas() {
-        return null;
     }
 }

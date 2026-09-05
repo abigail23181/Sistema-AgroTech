@@ -3,30 +3,35 @@ package Grupo4.Sistema.AgroTech.Model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tipos_mantenimiento")
+@Table(name = "tipo_mantenimiento")
 public class TipoMantenimiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String nombre;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(nullable = false)
-    private Boolean activo = true;
+    private boolean activo = true;
+
+    // Campo de la base de datos que está fallando
+    @Column(name = "clasificacion", nullable = false)
+    private String clasificacion = "GENERAL";
+
+    // Asigna un valor por defecto antes de guardar en MySQL
+    @PrePersist
+    public void prePersist() {
+        if (this.clasificacion == null || this.clasificacion.trim().isEmpty()) {
+            this.clasificacion = "GENERAL";
+        }
+    }
 
     public TipoMantenimiento() {}
-
-    public TipoMantenimiento(Long id, String nombre, String descripcion, Boolean activo) {
-        this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.activo = activo;
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -37,6 +42,9 @@ public class TipoMantenimiento {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public Boolean getActivo() { return activo; }
-    public void setActivo(Boolean activo) { this.activo = activo; }
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
+
+    public String getClasificacion() { return clasificacion; }
+    public void setClasificacion(String clasificacion) { this.clasificacion = clasificacion; }
 }

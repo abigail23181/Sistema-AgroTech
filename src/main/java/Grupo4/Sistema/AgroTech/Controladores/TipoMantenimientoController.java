@@ -1,7 +1,7 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
 import Grupo4.Sistema.AgroTech.Model.TipoMantenimiento;
-import Grupo4.Sistema.AgroTech.Servicios.Interfaces.ITipoMantenimientoService;
+import Grupo4.Sistema.AgroTech.Repositorios.TipoMantenimientoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,47 +13,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TipoMantenimientoController {
 
     @Autowired
-    private ITipoMantenimientoService tipoMantenimientoService;
+    private TipoMantenimientoRepository repository;
 
-    @GetMapping
+    @GetMapping({"", "/"})
     public String listar(Model model) {
-        model.addAttribute("lista", tipoMantenimientoService.listarTodos());
+        model.addAttribute("lista", repository.findAll());
         return "tipomantenimiento";
     }
 
     @PostMapping("/guardar")
-    public String guardar(@ModelAttribute TipoMantenimiento tipoMantenimiento, RedirectAttributes redirectAttrs) {
-        tipoMantenimientoService.guardar(tipoMantenimiento);
-        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento registrado exitosamente");
-        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+    public String guardar(@ModelAttribute TipoMantenimiento tipoMantenimiento, RedirectAttributes redirectAttributes) {
+        repository.save(tipoMantenimiento);
+        redirectAttributes.addFlashAttribute("mensaje", "Tipo de mantenimiento guardado correctamente.");
+        redirectAttributes.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/tipomantenimiento";
     }
 
-    @PostMapping("/editar")
-    public String editar(@ModelAttribute TipoMantenimiento tipoMantenimiento, RedirectAttributes redirectAttrs) {
-        tipoMantenimientoService.guardar(tipoMantenimiento);
-        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento actualizado correctamente");
-        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
-        return "redirect:/tipomantenimiento";
-    }
-
-    @PostMapping("/estado/{id}")
-    public String cambiarEstado(@PathVariable("id") Long id, @RequestParam("activo") Boolean activo, RedirectAttributes redirectAttrs) {
-        TipoMantenimiento tm = tipoMantenimientoService.obtenerPorId(id);
-        if (tm != null) {
-            tm.setActivo(activo);
-            tipoMantenimientoService.guardar(tm);
-            redirectAttrs.addFlashAttribute("mensaje", "Estado actualizado correctamente");
-            redirectAttrs.addFlashAttribute("tipoMensaje", "warning");
-        }
-        return "redirect:/tipomantenimiento";
-    }
-
-    @PostMapping("/eliminar")
-    public String eliminar(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
-        tipoMantenimientoService.eliminar(id);
-        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento eliminado correctamente");
-        redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
+    @GetMapping("/eliminar/{id}")
+    public String eliminar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        repository.deleteById(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Registro eliminado correctamente.");
+        redirectAttributes.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/tipomantenimiento";
     }
 }

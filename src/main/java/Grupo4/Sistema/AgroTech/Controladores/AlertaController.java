@@ -1,53 +1,160 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
 import Grupo4.Sistema.AgroTech.Model.Alerta;
-import Grupo4.Sistema.AgroTech.Repositorios.AlertaRepository;
+import Grupo4.Sistema.AgroTech.Model.Maquinaria;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IAlertaService;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IMaquinariaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
-
+import java.util.Optional;
 @Controller
 @RequestMapping("/alertas")
 public class AlertaController {
 
     @Autowired
-    private AlertaRepository alertaRepository;
+    private IAlertaService alertaService;
 
+    @Autowired
+    private IMaquinariaService maquinariaService;
+
+
+    // ==========================
+    // LISTAR
+    // ==========================
     @GetMapping
     public String listarAlertas(Model model) {
-        model.addAttribute("alertas", alertaRepository.findAll());
-        return "alertas";
+
+        model.addAttribute(
+                "alertas",
+                alertaService.listarTodas()
+        );
+
+        model.addAttribute(
+                "maquinarias",
+                maquinariaService.listarTodas()
+        );
+
+        return "/alertas";
     }
 
+
+    // ==========================
+    // CREAR
+    // ==========================
     @PostMapping("/guardar")
     public String guardarAlerta(
-            @RequestParam(value = "fechaLimite", required = false) String fechaLimite,
-            @RequestParam(value = "estado", required = false) String estado,
-            @RequestParam(value = "observaciones", required = false) String observaciones) {
+            @ModelAttribute Alerta alerta,
+            @RequestParam("idMaquinaria") Long idMaquinaria,
+            RedirectAttributes attribute) {
 
-        Alerta alerta = new Alerta();
+        Maquinaria maquinaria = maquinariaService
+                .buscarPorId(idMaquinaria)
+                .orElse(null);
 
-        // Mapeo seguro de campos obligatorios
-        alerta.setEstado((estado != null && !estado.isBlank()) ? estado : "Próxima");
-        alerta.setObservaciones((observaciones != null) ? observaciones : "");
+        if (maquinaria == null) {
 
-        if (fechaLimite != null && !fechaLimite.isBlank()) {
-            alerta.setFechaLimite(LocalDate.parse(fechaLimite));
-        } else {
-            alerta.setFechaLimite(LocalDate.now());
+            attribute.addFlashAttribute(
+                    "mensaje",
+                    "La maquinaria seleccionada no existe."
+            );
+
+            attribute.addFlashAttribute(
+                    "tipoMensaje",
+                    "danger"
+            );
+
+            return "redirect:/alertas";
         }
 
-        alertaRepository.save(alerta);
+        alerta.setMaquinaria(maquinaria);
+
+        alertaService.guardar(alerta);
+
+        attribute.addFlashAttribute(
+                "mensaje",
+                "¡Alerta registrada exitosamente!"
+        );
+
+        attribute.addFlashAttribute(
+                "tipoMensaje",
+                "success"
+        );
+
         return "redirect:/alertas";
     }
 
-    @GetMapping("/detalle/{id}")
-    public String verDetalle(@PathVariable("id") Long id, Model model) {
-        Alerta alerta = alertaRepository.findById(id).orElse(null);
-        model.addAttribute("alerta", alerta);
-        return "alerta-detalle";
+
+    // ==========================
+    // EDITAR
+    // ==========================
+    @PostMapping("/editar")
+    public String editarAlerta(
+            @ModelAttribute Alerta alerta,
+            @RequestParam("idMaquinaria") Long idMaquinaria,
+            RedirectAttributes attribute) {
+
+        Maquinaria maquinaria = maquinariaService
+                .buscarPorId(idMaquinaria)
+                .orElse(null);
+
+        if (maquinaria == null) {
+
+            attribute.addFlashAttribute(
+                    "mensaje",
+                    "La maquinaria seleccionada no existe."
+            );
+
+            attribute.addFlashAttribute(
+                    "tipoMensaje",
+                    "danger"
+            );
+
+            return "redirect:/alertas";
+        }
+
+        alerta.setMaquinaria(maquinaria);
+
+        alertaService.guardar(alerta);
+
+        attribute.addFlashAttribute(
+                "mensaje",
+                "¡Alerta actualizada correctamente!"
+        );
+
+        attribute.addFlashAttribute(
+                "tipoMensaje",
+                "success"
+        );
+
+        return "redirect:/alertas";
+    }
+
+
+    // ==========================
+    // ELIMINAR
+    // ==========================
+    @PostMapping("/eliminar")
+    public String eliminarAlerta(
+            @RequestParam("id") Long id,
+            RedirectAttributes attribute) {
+
+        alertaService.eliminarPorId(id);
+
+        attribute.addFlashAttribute(
+                "mensaje",
+                "¡Alerta eliminada correctamente!"
+        );
+
+        attribute.addFlashAttribute(
+                "tipoMensaje",
+                "warning"
+        );
+
+        return "redirect:/alertas";
     }
 }
+

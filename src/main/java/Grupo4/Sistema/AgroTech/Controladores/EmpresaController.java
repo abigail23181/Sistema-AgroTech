@@ -20,7 +20,7 @@ public class EmpresaController {
     @Autowired
     private EmpresaRepository empresaRepository;
 
-    @GetMapping
+    @GetMapping("")
     public String verPerfil(Model model) {
         List<Empresa> lista = empresaRepository.findAll();
         Empresa empresa = lista.isEmpty() ? new Empresa() : lista.get(0);
@@ -34,7 +34,6 @@ public class EmpresaController {
             @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
             RedirectAttributes redirectAttributes) {
 
-        // Restricción a registro único: busca el registro maestro existente
         List<Empresa> existentes = empresaRepository.findAll();
         if (!existentes.isEmpty()) {
             Empresa maestro = existentes.get(0);
@@ -44,7 +43,6 @@ public class EmpresaController {
             }
         }
 
-        // Carga y almacenamiento del Logotipo Institucional
         if (logoFile != null && !logoFile.isEmpty()) {
             try {
                 String nombreArchivo = System.currentTimeMillis() + "_" + logoFile.getOriginalFilename();

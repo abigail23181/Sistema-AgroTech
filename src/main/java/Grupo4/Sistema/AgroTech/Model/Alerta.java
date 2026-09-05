@@ -1,6 +1,7 @@
 package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -11,57 +12,77 @@ public class Alerta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // --- AGREGA ESTA LÍNEA ---
-    private String tipo;
+    private String ubicacion;
+
+    private LocalDate fechaLimite;
 
     private String estado;
 
-    @Column(name = "fecha_limite")
-    private LocalDate fechaLimite;
-
-    @Column(length = 1000)
     private String observaciones;
 
-    @Column(name = "historial_mantenimientos", length = 1000)
-    private String historialMantenimientos;
 
+    // ==========================
+    // RELACIÓN CON MAQUINARIA
+    // ==========================
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "maquinaria_id")
+    @JoinColumn(name = "id_maquinaria", nullable = false)
     private Maquinaria maquinaria;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tipo_mantenimiento_id")
-    private TipoMantenimiento tipoMantenimiento;
 
-    public Alerta() {}
+    // ==========================
+    // GETTERS Y SETTERS
+    // ==========================
 
-    // --- AGREGA ESTOS MÉTODOS GETTER Y SETTER ---
-    public String getTipo() {
-        return tipo;
+    public Long getId() {
+        return id;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public String getUbicacion() {
+        return ubicacion;
+    }
 
-    public LocalDate getFechaLimite() { return fechaLimite; }
-    public void setFechaLimite(LocalDate fechaLimite) { this.fechaLimite = fechaLimite; }
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 
-    public String getObservaciones() { return observaciones; }
-    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 
-    public String getHistorialMantenimientos() { return historialMantenimientos; }
-    public void setHistorialMantenimientos(String historialMantenimientos) { this.historialMantenimientos = historialMantenimientos; }
+    public LocalDate getFechaLimite() {
+        return fechaLimite;
+    }
 
-    public Maquinaria getMaquinaria() { return maquinaria; }
-    public void setMaquinaria(Maquinaria maquinaria) { this.maquinaria = maquinaria; }
+    public void setFechaLimite(LocalDate fechaLimite) {
+        this.fechaLimite = fechaLimite;
+    }
 
-    public TipoMantenimiento getTipoMantenimiento() { return tipoMantenimiento; }
-    public void setTipoMantenimiento(TipoMantenimiento tipoMantenimiento) { this.tipoMantenimiento = tipoMantenimiento; }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+
+    public Maquinaria getMaquinaria() {
+        return maquinaria;
+    }
+
+    public void setMaquinaria(Maquinaria maquinaria) {
+        this.maquinaria = maquinaria;
+    }
 }

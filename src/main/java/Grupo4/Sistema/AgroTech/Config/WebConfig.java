@@ -1,20 +1,17 @@
 package Grupo4.Sistema.AgroTech.Config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private SecurityInterceptor securityInterceptor;
-
+    // Configuración limpia sin interceptores conflictivos
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(securityInterceptor)
-                .addPathPatterns("/**") // Protege todo el sistema
-                .excludePathPatterns("/", "/login", "/registro", "/recuperar-password", "/css/**", "/js/**", "/images/**"); // Rutas libres
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Habilita el acceso a recursos estáticos si los necesitas
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:uploads/");
     }
 }

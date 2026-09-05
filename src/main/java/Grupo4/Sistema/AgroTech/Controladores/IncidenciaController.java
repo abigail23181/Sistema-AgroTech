@@ -1,50 +1,51 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
-import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IIncidenciaService;
 import Grupo4.Sistema.AgroTech.Model.Incidencia;
-
-import jakarta.validation.Valid;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IIncidenciaService;
+import Grupo4.Sistema.AgroTech.Repositorios.MaquinariaRepository; // Importa tu repositorio o servicio de Maquinarias
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDateTime;
 
 @Controller
-@RequestMapping("/incidencias")
+@RequestMapping({"/incidencias", "/incidencia"})
 public class IncidenciaController {
 
     @Autowired
     private IIncidenciaService incidenciaService;
 
-    // 1. Mostrar historial de incidencias
-    @GetMapping("/historial")
+    @Autowired
+    private MaquinariaRepository maquinariaRepository; // Reemplaza si usas servicio (ej. IMaquinariaService)
+
+    @GetMapping({"", "/"})
     public String listarIncidencias(Model model) {
         model.addAttribute("incidencias", incidenciaService.listarTodas());
-        return "incidencia_historial";
+        model.addAttribute("maquinarias", maquinariaRepository.findAll()); // Pasa las máquinas al formulario
+        return "incidencias";
     }
 
-    // 2. Mostrar formulario para nueva incidencia
-    @GetMapping("/nueva")
-    public String formularioNuevaIncidencia(Model model) {
-        model.addAttribute("incidencia", new Incidencia());
-        return "incidencia_form";
-    }
-
-    // 3. Procesar el formulario de guardado
     @PostMapping("/guardar")
-    public String guardarIncidencia(@Valid @ModelAttribute("incidencia") Incidencia incidencia,
-                                    BindingResult result,
-                                    Model model) {
-        // IMPORTANTE: BindingResult debe ir inmediatamente después del objeto con @Valid.
-        if (result.hasErrors()) {
-            return "incidencia_form";
+    public String guardarIncidencia(@ModelAttribute("incidencia") Incidencia incidencia, RedirectAttributes redirectAttributes) {
+        if (incidencia.getFechaHora() == null) {
+            incidencia.setFechaHora(LocalDateTime.now());
+        }
+        if (incidencia.getEstado() == null || incidencia.getEstado().isEmpty()) {
+            incidencia.setEstado("PENDIENTE");
         }
 
         incidenciaService.guardar(incidencia);
-        return "redirect:/incidencias/historial";
+        redirectAttributes.addFlashAttribute("mensaje", "Incidencia procesada con éxito.");
+        return "redirect:/incidencias";
+    }
+
+    @GetMapping("/eliminar/{id}")
+    public String eliminarIncidencia(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        incidenciaService.eliminar(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Incidencia eliminada correctamente.");
+        return "redirect:/incidencias";
     }
 }
