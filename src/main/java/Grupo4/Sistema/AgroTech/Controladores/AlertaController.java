@@ -22,9 +22,7 @@ public class AlertaController {
     private IMaquinariaService maquinariaService;
 
 
-    // ==========================
-    // LISTAR
-    // ==========================
+    
     @GetMapping
     public String listarAlertas(Model model) {
 
@@ -42,9 +40,6 @@ public class AlertaController {
     }
 
 
-    // ==========================
-    // CREAR
-    // ==========================
     @PostMapping("/guardar")
     public String guardarAlerta(
             @ModelAttribute Alerta alerta,
@@ -88,9 +83,6 @@ public class AlertaController {
     }
 
 
-    // ==========================
-    // EDITAR
-    // ==========================
     @PostMapping("/editar")
     public String editarAlerta(
             @ModelAttribute Alerta alerta,
@@ -133,10 +125,6 @@ public class AlertaController {
         return "redirect:/alertas";
     }
 
-
-    // ==========================
-    // ELIMINAR
-    // ==========================
     @PostMapping("/eliminar")
     public String eliminarAlerta(
             @RequestParam("id") Long id,
