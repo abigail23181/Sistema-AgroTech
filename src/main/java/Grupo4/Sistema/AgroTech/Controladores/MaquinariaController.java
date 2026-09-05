@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/maquinarias")
+@RequestMapping({"/maquinarias", "/maquinaria"})
 public class MaquinariaController {
 
     @Autowired
@@ -21,9 +21,8 @@ public class MaquinariaController {
     public String listar(Model model) {
         model.addAttribute("lista", maquinariaService.listarTodas());
         model.addAttribute("maquinariaNueva", new Maquinaria());
-        return "maquinaria";
+        return "maquinaria"; // Busca el archivo src/main/resources/templates/maquinaria.html
     }
-
 
     @PostMapping("/guardar")
     public String guardarMaquinaria(@ModelAttribute Maquinaria maquinaria, RedirectAttributes redirect) {
