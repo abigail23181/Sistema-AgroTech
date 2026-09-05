@@ -5,7 +5,10 @@ import Grupo4.Sistema.AgroTech.Repositorios.IncidenciaRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IIncidenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+<<<<<<< HEAD
 import org.springframework.transaction.annotation.Transactional;
+=======
+>>>>>>> feature/hu-08
 
 import java.util.List;
 
@@ -13,7 +16,16 @@ import java.util.List;
 public class IncidenciaServiceImpl implements IIncidenciaService {
 
     @Autowired
+<<<<<<< HEAD
     private IncidenciaRepository repository;
+=======
+    private IncidenciaRepository incidenciaRepository;
+
+    @Override
+    public Page<Incidencia> obtenerTodosPaginados(Pageable pageable) {
+        return incidenciaRepository.findAll(pageable);
+    }
+>>>>>>> feature/hu-08
 
     @Override
     @Transactional(readOnly = true)
@@ -22,14 +34,64 @@ public class IncidenciaServiceImpl implements IIncidenciaService {
     }
 
     @Override
+<<<<<<< HEAD
     @Transactional
     public void guardar(Incidencia incidencia) {
         repository.save(incidencia);
+=======
+    public List<Incidencia> obtenerTodas() {
+        return incidenciaRepository.findAll();
+    }
+
+    @Override
+    public Incidencia guardar(Incidencia incidencia) {
+        return registrarIncidencia(incidencia);
+>>>>>>> feature/hu-08
     }
 
     @Override
     @Transactional
     public void eliminar(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public void eliminarPorId(Long id) {
+        incidenciaRepository.deleteById(id);
+    }
+
+    @Override
+    public Incidencia registrarIncidencia(Incidencia incidencia) {
+        // Estado inicial por defecto
+        if (incidencia.getEstado() == null || incidencia.getEstado().isBlank()) {
+            incidencia.setEstado("PENDIENTE");
+        }
+
+        // Ubicación por defecto si la máquina no tiene registrada una específica
+        if (incidencia.getUbicacion() == null || incidencia.getUbicacion().isBlank()) {
+            incidencia.setUbicacion("Finca Principal / Ingenio Central");
+        }
+
+        Incidencia guardada = incidenciaRepository.save(incidencia);
+
+        // Generación automática de alerta si es MODERADA, ALTA o CRÍTICA
+        if ("MODERADA".equalsIgnoreCase(guardada.getSeveridad()) ||
+                "ALTA".equalsIgnoreCase(guardada.getSeveridad()) ||
+                "CRITICA".equalsIgnoreCase(guardada.getSeveridad())) {
+            generarAlertaCorrectiva(guardada);
+        }
+
+        return guardada;
+    }
+
+    @Override
+    public List<Incidencia> obtenerHistorialPorMaquina(Long maquinaId) {
+        return incidenciaRepository.findByMaquinaIdOrderByFechaHoraDesc(maquinaId);
+    }
+
+    private void generarAlertaCorrectiva(Incidencia incidencia) {
+        System.out.println("ALERTA GENERADA: Severidad " + incidencia.getSeveridad() +
+                " en Máquina #" + incidencia.getMaquinaId() +
+                " ubicada en " + incidencia.getUbicacion());
     }
 }

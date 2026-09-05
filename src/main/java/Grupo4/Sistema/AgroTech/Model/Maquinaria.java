@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "maquinarias")
+@Table(name = "maquinaria")
 public class Maquinaria {
 
     @Id
@@ -14,44 +14,32 @@ public class Maquinaria {
     private Long idMaquinaria;
 
     @NotBlank(message = "El nombre es obligatorio")
-    @Column(nullable = false, length = 150)
     private String nombre;
 
-    @NotBlank(message = "El modelo es obligatorio")
-    @Column(nullable = false, length = 100)
+    private String marca;
     private String modelo;
+    private Integer anio;
 
-    @NotBlank(message = "El estado es obligatorio")
-    @Column(nullable = false, length = 50)
-    private String estado = "Operativo";
+    @Column(name = "numero_serie")
+    private String numeroSerie;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private String estado;
+
+   
+    @NotNull(message = "Debe asignar una empresa")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_empresa", nullable = false)
-    @NotNull(message = "La empresa es obligatoria")
     private Empresa empresa;
 
     public Maquinaria() {}
 
-    public Maquinaria(Long idMaquinaria, String nombre, String modelo, String estado, Empresa empresa) {
-        this.idMaquinaria = idMaquinaria;
-        this.nombre = nombre;
-        this.modelo = modelo;
-        this.estado = estado;
-        this.empresa = empresa;
+    // Getters y Setters...
+
+    public Empresa getEmpresa() { 
+        return empresa; 
     }
 
-    public Long getIdMaquinaria() { return idMaquinaria; }
-    public void setIdMaquinaria(Long idMaquinaria) { this.idMaquinaria = idMaquinaria; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getModelo() { return modelo; }
-    public void setModelo(String modelo) { this.modelo = modelo; }
-
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-
-    public Empresa getEmpresa() { return empresa; }
-    public void setEmpresa(Empresa empresa) { this.empresa = empresa; }
+    public void setEmpresa(Empresa empresa) { 
+        this.empresa = empresa; 
+    }
 }

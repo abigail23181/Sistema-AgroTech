@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Incidencias - AgroTech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { width: 240px; background-color: #1e293b; min-height: 100vh; position: fixed; color: #94a3b8; }
+        .sidebar .brand { font-size: 1.25rem; font-weight: bold; color: #fff; padding: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .sidebar a { color: #94a3b8; text-decoration: none; padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 12px; font-size: 0.95rem; }
+        .sidebar a:hover, .sidebar a.active { background-color: #334155; color: #fff; border-left: 4px solid #3b82f6; }
+        .main-content { margin-left: 240px; padding: 2rem; }
+        .card-table { background: #fff; border-radius: 12px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="brand"><i class="fa-solid fa-tree text-success"></i> AgroTech</div>
+    <a href="#"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="#"><i class="fa-solid fa-building"></i> Empresas</a>
+    <a href="#"><i class="fa-solid fa-truck-front"></i> Maquinarias</a>
+    <a href="#"><i class="fa-solid fa-bell"></i> Alertas</a>
+    <a href="#" class="active"><i class="fa-solid fa-triangle-exclamation"></i> Incidencias</a>
+    <a href="#"><i class="fa-solid fa-wrench"></i> Mantenimientos</a>
+</div>
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-primary-subtle text-primary rounded-3">
+                <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+            </div>
+            <div>
+                <h3 class="fw-bold mb-0">Gestión de Incidencias</h3>
+                <p class="text-muted mb-0">Administra las incidencias registradas en la plataforma.</p>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary px-4 py-2 rounded-3" data-bs-toggle="modal" data-bs-target="#modalIncidencia">
+            <i class="fa-solid fa-plus me-1"></i> Nueva Incidencia
+        </button>
+    </div>
+
+    <!-- Alerta de éxito -->
+    <div th:if="${mensajeExito != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensajeExito}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Alerta de error -->
+    <div th:if="${mensajeError != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${mensajeError}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Tabla de Incidencias -->
+    <div class="card card-table p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="text-secondary small text-uppercase">
+                <tr>
+                    <th>ID</th>
+                    <th>MÁQUINA</th>
+                    <th>FECHA Y HORA</th>
+                    <th>TIPO DE FALLA</th>
+                    <th>SEVERIDAD</th>
+                    <th>UBICACIÓN</th>
+                    <th>ESTADO</th>
+                    <th class="text-end">ACCIONES</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="inc : ${incidencias}">
+                    <td class="fw-bold text-secondary" th:text="${inc.id}">1</td>
+                    <td th:text="${inc.maquinaId != null ? 'Máquina #' + inc.maquinaId : 'Sin Asignar'}">101</td>
+                    <td th:text="${#temporals.format(inc.fechaHora, 'yyyy-MM-dd HH:mm')}">2026-09-02 10:00</td>
+                    <td th:text="${inc.tipoFalla ?: 'Sin Especificar'}">Falla</td>
+                    <td>
+                        <span th:class="${inc.severidad == 'CRITICA' ? 'badge bg-danger' : (inc.severidad == 'MODERADA' ? 'badge bg-warning text-dark' : 'badge bg-info text-dark')}"
+                              th:text="${inc.severidad ?: 'LEVE'}">LEVE</span>
+                    </td>
+                    <td th:text="${inc.ubicacion ?: 'No Registrada'}">Ubicación</td>
+                    <td>
+                        <span th:class="${inc.estado == 'RESUELTA' ? 'badge bg-success' : 'badge bg-secondary'}"
+                              th:text="${inc.estado ?: 'PENDIENTE'}">PENDIENTE</span>
+                    </td>
+                    <td class="text-end">
+                        <!-- Botón Editar -->
+                        <button type="button" class="btn btn-sm btn-outline-primary me-1"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="'#modalEditar' + ${inc.id}">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <!-- Botón Eliminar -->
+                        <a th:href="@{/incidencias/eliminar/{id}(id=${inc.id})}"
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('¿Deseas eliminar esta incidencia?');">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+
+                        <!-- Modal de Edición por fila -->
+                        <div class="modal fade text-start" th:id="'modalEditar' + ${inc.id}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title fw-bold">Editar Incidencia #<span th:text="${inc.id}"></span></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form th:action="@{/incidencias/guardar}" method="post">
+                                        <input type="hidden" name="id" th:value="${inc.id}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Seleccionar Máquina *</label>
+                                                <select class="form-select" name="maquinaId" required>
+                                                    <option value="">Seleccione o Ingrese ID...</option>
+                                                    <option th:each="m : ${maquinas}"
+                                                            th:value="${m.id}"
+                                                            th:text="'Máquina #' + ${m.id}"
+                                                            th:selected="${m.id == inc.maquinaId}"></option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Tipo de Mantenimiento Correctivo *</label>
+                                                <select class="form-select" name="tipoMantenimientoCorrectivo" required>
+                                                    <option value="MECANICO" th:selected="${inc.tipoMantenimientoCorrectivo == 'MECANICO'}">Mecánico</option>
+                                                    <option value="ELECTRICO" th:selected="${inc.tipoMantenimientoCorrectivo == 'ELECTRICO'}">Eléctrico</option>
+                                                    <option value="HIDRAULICO" th:selected="${inc.tipoMantenimientoCorrectivo == 'HIDRAULICO'}">Hidráulico</option>
+                                                    <option value="MOTOR" th:selected="${inc.tipoMantenimientoCorrectivo == 'MOTOR'}">Motor / Transmisión</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Tipo de Falla *</label>
+                                                <input type="text" class="form-control" name="tipoFalla" th:value="${inc.tipoFalla}" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Fecha y Hora *</label>
+                                                <input type="datetime-local" class="form-control" name="fechaHora" th:value="${inc.fechaHora}" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Severidad *</label>
+                                                <select class="form-select" name="severidad" required>
+                                                    <option value="LEVE" th:selected="${inc.severidad == 'LEVE'}">Leve</option>
+                                                    <option value="MODERADA" th:selected="${inc.severidad == 'MODERADA'}">Moderada</option>
+                                                    <option value="CRITICA" th:selected="${inc.severidad == 'CRITICA'}">Crítica</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Estado *</label>
+                                                <select class="form-select" name="estado" required>
+                                                    <option value="PENDIENTE" th:selected="${inc.estado == 'PENDIENTE'}">Pendiente</option>
+                                                    <option value="RESUELTA" th:selected="${inc.estado == 'RESUELTA'}">Resuelta</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Ubicación (Finca/Ingenio)</label>
+                                                <input type="text" class="form-control" name="ubicacion" th:value="${inc.ubicacion}">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Descripción *</label>
+                                                <textarea class="form-control" name="descripcion" rows="3" required th:text="${inc.descripcion}"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary px-4">Actualizar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${incidencias == null or #lists.isEmpty(incidencias)}">
+                    <td colspan="8" class="text-center py-4 text-muted">No hay incidencias registradas.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Registrar Nueva Incidencia -->
+<div class="modal fade" id="modalIncidencia" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Registrar Nueva Incidencia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/incidencias/guardar}" th:object="${incidencia}" method="post">
+                <div class="modal-body">
+                    <!-- Selección o Creación de Máquina -->
+                    <div class="mb-3">
+                        <label class="form-label">ID / Seleccionar Máquina *</label>
+                        <select class="form-select" name="maquinaId" th:field="*{maquinaId}" required>
+                            <option value="">-- Seleccione una máquina --</option>
+                            <option th:each="m : ${maquinas}" th:value="${m.id}" th:text="'Máquina #' + ${m.id}"></option>
+                        </select>
+                        <small class="text-muted">Si no aparece en la lista, escribe el número directo abajo:</small>
+                        <input type="number" class="form-control mt-1" name="maquinaId" placeholder="O ingrese un ID manualmente">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Mantenimiento Correctivo *</label>
+                        <select class="form-select" th:field="*{tipoMantenimientoCorrectivo}" required>
+                            <option value="">Seleccione tipo...</option>
+                            <option value="MECANICO">Mecánico</option>
+                            <option value="ELECTRICO">Eléctrico</option>
+                            <option value="HIDRAULICO">Hidráulico</option>
+                            <option value="MOTOR">Motor / Transmisión</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Falla *</label>
+                        <input type="text" class="form-control" th:field="*{tipoFalla}" required placeholder="Ej. Falla de motor">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha y Hora *</label>
+                        <input type="datetime-local" class="form-control" th:field="*{fechaHora}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Severidad *</label>
+                        <select class="form-select" th:field="*{severidad}" required>
+                            <option value="LEVE">Leve</option>
+                            <option value="MODERADA">Moderada</option>
+                            <option value="CRITICA">Crítica</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ubicación (Finca/Ingenio)</label>
+                        <input type="text" class="form-control" th:field="*{ubicacion}" placeholder="Ej. Finca Santa Elena">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Descripción *</label>
+                        <textarea class="form-control" th:field="*{descripcion}" rows="3" required placeholder="Escriba el detalle de la incidencia..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
