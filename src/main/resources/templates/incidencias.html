@@ -11,6 +11,7 @@
         .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; }
         .sidebar a:hover, .sidebar a.active { background-color: #334155; color: #fff; }
 
+        /* Modal por respaldo CSS manual si JS de Bootstrap falla */
         .modal.show-manual {
             display: block !important;
             background: rgba(0, 0, 0, 0.5);
@@ -103,7 +104,6 @@
                                         th:data-estado="${inc.estado}"
                                         th:data-fecha="${#temporals.format(inc.fechaHora, 'yyyy-MM-dd''T''HH:mm')}"
                                         th:data-descripcion="${inc.descripcion}"
-                                        th:data-maquina="${inc.maquinaId}"
                                         onclick="mostrarModalEditar(this)">
                                     <i class="bi bi-pencil-fill me-1"></i>Editar
                                 </button>
@@ -166,20 +166,7 @@
                             <option value="RESUELTO">RESUELTO</option>
                         </select>
                     </div>
-
-                    <!-- CAMPO DE MAQUINARIA (Evita el error de maquina_id en MySQL) -->
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-secondary">Maquinaria *</label>
-                        <select id="maquinaId" name="maquinaId" class="form-select rounded-3" required>
-                            <option value="1">Maquinaria #1 (Por defecto)</option>
-                            <option th:each="maq : ${maquinarias}"
-                                    th:value="${maq.id}"
-                                    th:text="${maq.nombre}">
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label class="form-label small fw-bold text-secondary">Fecha y Hora *</label>
                         <input type="datetime-local" id="fechaHora" name="fechaHora" class="form-control rounded-3" required>
                     </div>
@@ -206,6 +193,7 @@
             let m = bootstrap.Modal.getOrCreateInstance(modalEl);
             m.show();
         } else {
+            // Respaldo CSS directo si Bootstrap JS falla
             modalEl.classList.add('show', 'show-manual');
         }
     }
@@ -227,7 +215,6 @@
         document.getElementById('ubicacion').value = '';
         document.getElementById('estado').value = 'PENDIENTE';
         document.getElementById('descripcion').value = '';
-        document.getElementById('maquinaId').value = '1';
 
         const now = new Date();
         const year = now.getFullYear();
@@ -249,7 +236,6 @@
         document.getElementById('estado').value = btn.getAttribute('data-estado') || 'PENDIENTE';
         document.getElementById('fechaHora').value = btn.getAttribute('data-fecha') || '';
         document.getElementById('descripcion').value = btn.getAttribute('data-descripcion') || '';
-        document.getElementById('maquinaId').value = btn.getAttribute('data-maquina') || '1';
 
         abrirModalForzado();
     }
