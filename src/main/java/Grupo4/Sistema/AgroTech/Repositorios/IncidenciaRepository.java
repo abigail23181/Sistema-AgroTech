@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IncidenciaRepository extends JpaRepository<Incidencia, Long> {
+    // Mantén el repositorio vacío para que Spring Boot inicie sin validar nombres de propiedades
 }
