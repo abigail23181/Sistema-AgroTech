@@ -1,17 +1,26 @@
 package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "tipos_mantenimiento")
+@Table(name = "tipomantenimiento")
 public class TipoMantenimiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @NotBlank(message = "El nombre del tipo de mantenimiento es obligatorio.")
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres.")
+    @Column(nullable = false, unique = true, length = 100)
     private String nombre;
+
+    @NotBlank(message = "Debe seleccionar una categoría (preventivo o correctivo).")
+    @Column(nullable = false, length = 20)
+    private String categoria;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
@@ -21,9 +30,10 @@ public class TipoMantenimiento {
 
     public TipoMantenimiento() {}
 
-    public TipoMantenimiento(Long id, String nombre, String descripcion, Boolean activo) {
+    public TipoMantenimiento(Long id, String nombre, String categoria, String descripcion, Boolean activo) {
         this.id = id;
         this.nombre = nombre;
+        this.categoria = categoria;
         this.descripcion = descripcion;
         this.activo = activo;
     }
@@ -33,6 +43,9 @@ public class TipoMantenimiento {
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }

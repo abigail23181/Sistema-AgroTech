@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Panel Principal - AgroTech</title>
@@ -7,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body { background-color: #f4f6f9; }
-        .sidebar { width: 240px; min-height: 100vh; background-color: #1e293b; color: #fff; }
+        .sidebar { width: 250px; min-height: 100vh; background-color: #1e293b; color: #fff; }
         .sidebar a { color: #94a3b8; text-decoration: none; padding: 10px 15px; display: block; border-radius: 8px; }
         .sidebar a:hover, .sidebar a.active { background-color: #334155; color: #fff; }
         .card-stat { border-radius: 12px; border: 1px solid #e2e8f0; }
@@ -15,7 +16,6 @@
 </head>
 <body class="d-flex">
 
-<!-- SIDEBAR -->
 <div class="sidebar p-3 d-flex flex-column justify-content-between">
     <div>
         <h4 class="fw-bold text-white mb-4 d-flex align-items-center gap-2">
@@ -24,37 +24,40 @@
         <nav class="d-flex flex-column gap-1">
             <a th:href="@{/dashboard}" class="active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
             <a th:href="@{/empresas}"><i class="bi bi-building me-2"></i> Empresas</a>
+
             <a th:href="@{/maquinarias}"><i class="bi bi-truck me-2"></i> Maquinarias</a>
+
             <a th:href="@{/alertas}"><i class="bi bi-bell me-2"></i> Alertas</a>
             <a th:href="@{/incidencias}"><i class="bi bi-exclamation-triangle me-2"></i> Incidencias</a>
             <a th:href="@{/tipomantenimiento}"><i class="bi bi-tools me-2"></i> Mantenimientos</a>
         </nav>
     </div>
 
-    <!-- PERFIL Y CERRAR SESIÓN -->
     <div class="pt-3 border-top border-secondary">
         <a th:href="@{/perfil}" class="text-white mb-1"><i class="bi bi-person-circle me-2"></i> Ver Perfil</a>
         <a th:href="@{/logout}" class="text-danger"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
     </div>
 </div>
 
-<!-- CONTENIDO PRINCIPAL -->
 <div class="flex-grow-1 p-4">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold text-success mb-0 d-flex align-items-center gap-2">
             🌲 BIENVENIDOS A NUESTRO SISTEMA-AGROTECH
         </h3>
-        <span class="badge bg-light text-dark border px-3 py-2" th:text="${usuario}">admin@agrotech.com</span>
+        <span class="badge bg-light text-dark border px-3 py-2 shadow-sm font-monospace">
+            <i class="bi bi-person-circle me-1 text-primary"></i>
+            <span th:text="${usuario != null ? usuario : 'admin@agrotech.com'}">admin@agrotech.com</span>
+        </span>
     </div>
 
-    <!-- TARJETAS SUPERIORES -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card card-stat p-3 bg-white shadow-sm border-start border-primary border-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <small class="text-muted fw-bold">EMPRESAS</small>
-                        <h2 class="fw-bold mb-0">1</h2>
+                        <h2 class="fw-bold mb-0" th:text="${totalEmpresas != null ? totalEmpresas : 1}">1</h2>
                     </div>
                     <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3">
                         <i class="bi bi-building fs-3"></i>
@@ -67,7 +70,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <small class="text-muted fw-bold">MAQUINARIAS</small>
-                        <h2 class="fw-bold mb-0">1</h2>
+                        <h2 class="fw-bold mb-0" th:text="${totalMaquinarias != null ? totalMaquinarias : 1}">1</h2>
                     </div>
                     <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3">
                         <i class="bi bi-truck fs-3"></i>
@@ -80,7 +83,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <small class="text-muted fw-bold">ALERTAS ACTIVAS</small>
-                        <h2 class="fw-bold mb-0">1</h2>
+                        <h2 class="fw-bold mb-0" th:text="${totalAlertas != null ? totalAlertas : 1}">1</h2>
                     </div>
                     <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3">
                         <i class="bi bi-bell fs-3"></i>
@@ -90,33 +93,35 @@
         </div>
     </div>
 
-    <!-- TARJETAS INFERIORES -->
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <i class="bi bi-bell text-danger fs-1 mb-2"></i>
-                <h5 class="fw-bold">Alertas del Sistema</h5>
-                <p class="text-muted small">Notificaciones y alertas programadas.</p>
-                <a th:href="@{/alertas}" class="btn btn-outline-danger rounded-pill mt-auto">Abrir Alertas</a>
+    <div class="card border-0 shadow-sm rounded-4 mb-3">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-box-seam me-2 text-primary"></i>Catálogo e inventario de maquinaria industrial
+                </h5>
+                <p class="text-muted mb-0 small">Consulta, registro y control del estado de los equipos agrícolas e industriales.</p>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <i class="bi bi-exclamation-triangle text-warning fs-1 mb-2"></i>
-                <h5 class="fw-bold">Incidencias</h5>
-                <p class="text-muted small">Historial de reportes y fallas.</p>
-                <a th:href="@{/incidencias}" class="btn btn-outline-warning rounded-pill mt-auto">Ver Historial</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <i class="bi bi-tools text-info fs-1 mb-2"></i>
-                <h5 class="fw-bold">Tipos de Mantenimiento</h5>
-                <p class="text-muted small">Ajuste de parámetros y categorías.</p>
-                <a th:href="@{/tipomantenimiento}" class="btn btn-outline-info rounded-pill mt-auto">Configurar</a>
-            </div>
+            <a th:href="@{/maquinarias}" class="btn btn-primary rounded-pill px-4 fw-semibold text-nowrap ms-3">
+                Gestionar Catálogo <i class="bi bi-arrow-right ms-1"></i>
+            </a>
         </div>
     </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-3">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-calendar-check me-2 text-info"></i>Calendario de mantenimiento preventivo
+                </h5>
+                <p class="text-muted mb-0 small">Gestión de alertas, eventos y fechas programadas para mantenimiento.</p>
+            </div>
+            <a th:href="@{/tipomantenimiento}" class="btn btn-info text-white rounded-pill px-4 fw-semibold text-nowrap ms-3">
+                Ver Calendario Completo <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
 </div>
+
 </body>
 </html>

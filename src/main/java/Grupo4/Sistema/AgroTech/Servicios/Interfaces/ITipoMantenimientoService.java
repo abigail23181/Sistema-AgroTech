@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface ITipoMantenimientoService {
     List<TipoMantenimiento> listarTodos();
-    void guardar(TipoMantenimiento tipoMantenimiento);
-    void cambiarEstado(Long id, Boolean activo);
-    void eliminar(Long id);
-
+    List<TipoMantenimiento> listarActivos(); // Para CA06 (Disponibilidad en incidencias/alertas)
     TipoMantenimiento obtenerPorId(Long id);
+    TipoMantenimiento guardar(TipoMantenimiento tipoMantenimiento);
+    void eliminar(Long id);
+    boolean existePorNombre(String nombre); // Para CA04
 }

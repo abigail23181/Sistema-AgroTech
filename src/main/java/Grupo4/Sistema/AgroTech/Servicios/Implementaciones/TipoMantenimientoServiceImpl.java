@@ -2,7 +2,6 @@ package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 
 import Grupo4.Sistema.AgroTech.Model.TipoMantenimiento;
 import Grupo4.Sistema.AgroTech.Repositorios.TipoMantenimientoRepository;
-import Grupo4.Sistema.AgroTech.Repositorios.TipoMantenimientoRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.ITipoMantenimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,37 +13,45 @@ import java.util.List;
 public class TipoMantenimientoServiceImpl implements ITipoMantenimientoService {
 
     @Autowired
-    private TipoMantenimientoRepository repository;
+    private TipoMantenimientoRepository tipoMantenimientoRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<TipoMantenimiento> listarTodos() {
-        return repository.findAll();
+        return tipoMantenimientoRepository.findAll();
+    }
+
+    // CA06: Filtra solo los tipos de mantenimiento activos para asociarlos en incidencias/alertas
+    @Override
+    @Transactional(readOnly = true)
+    public List<TipoMantenimiento> listarActivos() {
+        return tipoMantenimientoRepository.findByActivoTrue();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TipoMantenimiento obtenerPorId(Long id) {
+        return tipoMantenimientoRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
-    public void guardar(TipoMantenimiento tipoMantenimiento) {
-        repository.save(tipoMantenimiento);
-    }
-
-    @Override
-    @Transactional
-    public void cambiarEstado(Long id, Boolean activo) {
-        repository.findById(id).ifPresent(tm -> {
-            tm.setActivo(activo);
-            repository.save(tm);
-        });
+    public TipoMantenimiento guardar(TipoMantenimiento tipoMantenimiento) {
+        return tipoMantenimientoRepository.save(tipoMantenimiento);
     }
 
     @Override
     @Transactional
     public void eliminar(Long id) {
-        repository.deleteById(id);
+        tipoMantenimientoRepository.deleteById(id);
     }
 
     @Override
-    public TipoMantenimiento obtenerPorId(Long id) {
-        return null;
+    @Transactional(readOnly = true)
+    public boolean existePorNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            return false;
+        }
+        return tipoMantenimientoRepository.existsByNombreIgnoreCase(nombre.trim());
     }
 }
