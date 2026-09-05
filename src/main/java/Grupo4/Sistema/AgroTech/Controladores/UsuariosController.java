@@ -14,82 +14,67 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UsuariosController {
 
     @Autowired
-    private IUsuariosService usuarioService;
+    private IUsuariosService usuariosService;
 
-    // Métodos aux. para RBAC (CA03)
-    private boolean estaAutenticado(HttpSession session) {
-        return session.getAttribute("usuarioLogueado") != null;
-    }
-
+    // CA03: Verificación de Rol Administrativo
     private boolean esAdmin(HttpSession session) {
-        String rol = (String) session.getAttribute("rolLogueado");
-        return "Administrador".equalsIgnoreCase(rol);
+        String rol = (String) session.getAttribute("rol");
+        return "ADMIN".equalsIgnoreCase(rol);
     }
 
-    // Listar usuarios en el módulo (Solo Administrador)
     @GetMapping
     public String listarUsuarios(HttpSession session, Model model) {
-        if (!estaAutenticado(session)) {
-            return "redirect:/login";
-        }
-
-        // CA03: Bloqueo RBAC si no es Administrador
         if (!esAdmin(session)) {
-            return "error/403";
+            return "error/403"; // CA03: 403 Forbidden
         }
 
-        model.addAttribute("usuarios", usuarioService.listarTodos());
-        model.addAttribute("nuevoUsuario", new Usuarios());
-        return "usuarios";
+        model.addAttribute("usuarios", usuariosService.listarTodos());
+        // SOLUCIÓN: Instancia obligatoria para bindear el formulario del modal
+        model.addAttribute("usuario", new Usuarios());
+
+        return "usuarios/lista";
     }
 
-    // Guardar / Crear / Editar Usuario (CA01, CA02, CA04)
-    @PostMapping("/guardar")
-    public String guardarUsuario(@ModelAttribute("nuevoUsuario") Usuarios usuario,
-                                 HttpSession session,
-                                 RedirectAttributes redirectAttributes) {
-        if (!estaAutenticado(session)) {
-            return "redirect:/login";
+    @GetMapping("/nuevo")
+    public String formularioNuevo(HttpSession session, Model model) {
+        if (!esAdmin(session)) {
+            return "error/403";
         }
+        model.addAttribute("usuario", new Usuarios());
+        return "usuarios/formulario";
+    }
 
+    @PostMapping("/guardar")
+    public String guardarUsuario(@ModelAttribute("usuario") Usuarios usuario, HttpSession session, RedirectAttributes flash) {
         if (!esAdmin(session)) {
             return "error/403";
         }
 
-        // CA04: Validación de Nombre de Usuario o Correo Duplicado (para registros nuevos)
+        // CA04: Validación de Usuario o Correo Duplicado
         if (usuario.getId() == null) {
-            boolean usernameExiste = usuarioService.existeUsername(usuario.getUsername());
-            boolean correoExiste = usuarioService.existeCorreo(usuario.getCorreo());
-
-            if (usernameExiste || correoExiste) {
-                redirectAttributes.addFlashAttribute("errorDuplicado",
-                        "El nombre de usuario o correo electrónico ya se encuentra registrado.");
+            if (usuariosService.existeEmail(usuario.getEmail())) {
+                flash.addFlashAttribute("error", "El correo electrónico ya se encuentra registrado.");
+                return "redirect:/usuarios";
+            }
+            if (usuariosService.existeUsername(usuario.getUsername())) {
+                flash.addFlashAttribute("error", "El nombre de usuario ya se encuentra registrado.");
                 return "redirect:/usuarios";
             }
         }
 
-        // CA01: Guardar la cuenta y habilitar accesos según el rol
-        usuarioService.guardarUsuario(usuario);
-
-        // Mensaje requerido en CA01
-        redirectAttributes.addFlashAttribute("exito", "Usuario registrado exitosamente");
+        usuariosService.guardar(usuario);
+        flash.addFlashAttribute("exito", "Usuario registrado exitosamente"); // CA01
         return "redirect:/usuarios";
     }
 
-    // CA02: Cambio de Estado (Activar / Desactivar Usuario)
-    @PostMapping("/estado/{id}")
-    public String cambiarEstado(@PathVariable("id") Long id,
-                                @RequestParam("activo") boolean activo,
-                                HttpSession session) {
-        if (!estaAutenticado(session)) {
-            return "redirect:/login";
-        }
-
+    // CA02: Cambio de Estado (Desactivar/Activar)
+    @GetMapping("/estado/{id}/{estado}")
+    public String cambiarEstado(@PathVariable Long id, @PathVariable boolean estado, HttpSession session, RedirectAttributes flash) {
         if (!esAdmin(session)) {
             return "error/403";
         }
-
-        usuarioService.cambiarEstado(id, activo);
+        usuariosService.cambiarEstado(id, estado);
+        flash.addFlashAttribute("exito", "Estado del usuario actualizado correctamente.");
         return "redirect:/usuarios";
     }
 }

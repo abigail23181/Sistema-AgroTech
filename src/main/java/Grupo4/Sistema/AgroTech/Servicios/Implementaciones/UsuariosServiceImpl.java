@@ -9,52 +9,52 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UsuariosServiceImpl implements IUsuariosService { // <-- Se eliminó "abstract"
+public class UsuariosServiceImpl implements IUsuariosService {
 
     @Autowired
-    private IUsuariosRepository usuarioRepository;
+    private IUsuariosRepository usuariosRepository;
 
     @Override
     public List<Usuarios> listarTodos() {
-        return usuarioRepository.findAll();
+        return usuariosRepository.findAll();
     }
 
     @Override
-    public Usuarios guardarUsuario(IUsuariosService usuario) {
-        return null;
-    }
-
-    @Override
-    public Usuarios guardarUsuario(Usuarios usuario) {
-        return usuarioRepository.save(usuario);
+    public Usuarios guardar(Usuarios usuario) {
+        return usuariosRepository.save(usuario);
     }
 
     @Override
     public Usuarios obtenerPorId(Long id) {
-        return usuarioRepository.findById(id).orElse(null);
+        return usuariosRepository.findById(id).orElse(null);
     }
 
     @Override
     public void cambiarEstado(Long id, boolean activo) {
-        Usuarios user = obtenerPorId(id);
-        if (user != null) {
-            user.setActivo(activo);
-            usuarioRepository.save(user);
+        Usuarios usuario = obtenerPorId(id);
+        if (usuario != null) {
+            usuario.setActivo(activo);
+            usuariosRepository.save(usuario);
         }
     }
 
     @Override
+    public Usuarios autenticar(String email, String password) {
+        Usuarios usuario = usuariosRepository.findByEmail(email);
+        // CA02: Bloquea el inicio de sesión si activo == false
+        if (usuario != null && usuario.getPassword().equals(password) && usuario.isActivo()) {
+            return usuario;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean existeEmail(String email) {
+        return usuariosRepository.existsByEmail(email);
+    }
+
+    @Override
     public boolean existeUsername(String username) {
-        return usuarioRepository.existsByUsername(username);
-    }
-
-    @Override
-    public boolean existeCorreo(String correo) {
-        return usuarioRepository.existsByCorreo(correo);
-    }
-
-    @Override
-    public void guardarUsuarios(Usuarios usuario) {
-
+        return usuariosRepository.existsByUsername(username);
     }
 }

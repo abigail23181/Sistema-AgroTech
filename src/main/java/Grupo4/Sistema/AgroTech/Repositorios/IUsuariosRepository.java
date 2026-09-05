@@ -1,14 +1,13 @@
 package Grupo4.Sistema.AgroTech.Repositorios;
 
-import Grupo4.Sistema.AgroTech.Model.Usuarios; // <-- Debe ser la Entidad @Entity
+import Grupo4.Sistema.AgroTech.Model.Usuarios;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface IUsuariosRepository extends JpaRepository<Usuarios, Long> { // <-- Usuarios (Entidad), Long (ID)
+public interface IUsuariosRepository extends JpaRepository<Usuarios, Long> {
+    Usuarios findByEmail(String email);
+    Usuarios findByUsername(String username);
+    boolean existsByEmail(String email);
     boolean existsByUsername(String username);
-    boolean existsByCorreo(String correo);
-    Optional<Usuarios> findByUsername(String username);
 }

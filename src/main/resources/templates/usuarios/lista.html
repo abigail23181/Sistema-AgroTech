@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios - AgroTech</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+    <!-- Encabezado y Botón para Modal (CA01) -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Gestión de Cuentas de Usuario</h2>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUsuario">
+            + Crear Usuario
+        </button>
+    </div>
+
+    <!-- Mensajes de Notificación (CA01 y CA04) -->
+    <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${exito}"></span> <!-- Ejemplo: "Usuario registrado exitosamente" (CA01) -->
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span> <!-- Ejemplo: Mensaje de correo/usuario duplicado (CA04) -->
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Tabla de Consulta y Control de Estado (CA02) -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover mb-0 align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Rol Asignado</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.id}">1</td>
+                    <td th:text="${u.nombre}">Juan Pérez</td>
+                    <td th:text="${u.username}">jperez</td>
+                    <td th:text="${u.email}">juan@agrotech.com</td>
+                    <td>
+                        <span class="badge bg-primary" th:text="${u.rol}">ADMIN</span>
+                    </td>
+                    <td>
+                        <span th:if="${u.activo}" class="badge bg-success">Activo</span>
+                        <span th:unless="${u.activo}" class="badge bg-secondary">Inactivo</span>
+                    </td>
+                    <td>
+                        <!-- CA02: Desactivar o Activar usuario para impedir inicio de sesión -->
+                        <a th:if="${u.activo}"
+                           th:href="@{/usuarios/estado/{id}/false(id=${u.id})}"
+                           class="btn btn-warning btn-sm"
+                           onclick="return confirm('¿Desactivar esta cuenta? El usuario no podrá iniciar sesión.')">
+                            Desactivar
+                        </a>
+                        <a th:unless="${u.activo}"
+                           th:href="@{/usuarios/estado/{id}/true(id=${u.id})}"
+                           class="btn btn-outline-success btn-sm">
+                            Activar
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="7" class="text-center text-muted py-3">No hay usuarios registrados.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Usuario (CA01 y CA04) -->
+<div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalUsuarioLabel">Crear Nuevo Usuario</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre Completo</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Ej: Carlos López" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nombre de Usuario</label>
+                        <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="Ej: clopez" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="carlos@agrotech.com" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" id="password" th:field="*{password}" class="form-control" required />
+                    </div>
+
+                    <!-- CA01: Selección de Rol obligatorio -->
+                    <div class="mb-3">
+                        <label for="rol" class="form-label">Rol Asignado</label>
+                        <select id="rol" th:field="*{rol}" class="form-select" required>
+                            <option value="" disabled selected>-- Seleccione un rol --</option>
+                            <option value="ADMIN">Administrador</option>
+                            <option value="JEFE_TALLER">Jefe de Taller</option>
+                            <option value="MECANICO">Mecánico</option>
+                            <option value="OPERADOR">Operador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
