@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/_mainLayout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Incidencias | AgroTech</title>
+
+    ```
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    ```
+
+</head>
+
+<body>
+
+<div layout:fragment="content">
+
+    ```
+    <!-- ENCABEZADO -->
+    <div class="container-fluid px-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-success mb-1">
+                    <i class="fas fa-triangle-exclamation me-2"></i>
+                    Historial de Incidencias
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Registro y seguimiento de incidencias del sistema
+                </p>
+            </div>
+
+            <button type="button"
+                    class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalCrear">
+
+                <i class="fas fa-plus me-2"></i>
+                Nueva Incidencia
+
+            </button>
+        </div>
+
+
+        <!-- MENSAJES -->
+        <div th:if="${mensaje}"
+             th:class="'alert alert-' + ${tipoMensaje} + ' alert-dismissible fade show'"
+             role="alert">
+
+            <i th:if="${tipoMensaje == 'success'}"
+               class="fas fa-circle-check me-2"></i>
+
+            <i th:if="${tipoMensaje == 'danger'}"
+               class="fas fa-circle-exclamation me-2"></i>
+
+            <span th:text="${mensaje}"></span>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+
+        <!-- TABLA -->
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="mb-0 fw-bold text-secondary">
+                    <i class="fas fa-list me-2"></i>
+                    Incidencias registradas
+                </h5>
+
+            </div>
+
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                        <tr>
+
+                            <th class="px-4">ID</th>
+                            <th>Severidad</th>
+                            <th>Fecha</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        <tr th:each="incidencia : ${incidencias}">
+
+                            <!-- ID -->
+                            <td class="px-4 fw-bold text-secondary"
+                                th:text="'#' + ${incidencia.id}">
+                                #1
+                            </td>
+
+
+                            <!-- SEVERIDAD -->
+                            <td>
+
+                            <span th:if="${incidencia.severidad == 'Alta'}"
+                                  class="badge bg-danger">
+
+                                <i class="fas fa-circle-exclamation me-1"></i>
+                                Alta
+
+                            </span>
+
+
+                                <span th:if="${incidencia.severidad == 'Media'}"
+                                      class="badge bg-warning text-dark">
+
+                                <i class="fas fa-triangle-exclamation me-1"></i>
+                                Media
+
+                            </span>
+
+
+                                <span th:if="${incidencia.severidad == 'Baja'}"
+                                      class="badge bg-success">
+
+                                <i class="fas fa-circle-info me-1"></i>
+                                Baja
+
+                            </span>
+
+                            </td>
+
+
+                            <!-- FECHA -->
+                            <td>
+
+                            <span th:text="${incidencia.fecha}">
+                                2026-01-01
+                            </span>
+
+                            </td>
+
+
+                            <!-- UBICACIÓN -->
+                            <td>
+
+                                <i class="fas fa-location-dot text-success me-2"></i>
+
+                                <span th:text="${incidencia.ubicacion}">
+                                Ubicación
+                            </span>
+
+                            </td>
+
+
+                            <!-- ESTADO -->
+                            <td>
+
+                            <span th:if="${incidencia.estado == 'Pendiente'}"
+                                  class="badge bg-warning text-dark">
+                                Pendiente
+                            </span>
+
+
+                                <span th:if="${incidencia.estado == 'En proceso'}"
+                                      class="badge bg-primary">
+                                En proceso
+                            </span>
+
+
+                                <span th:if="${incidencia.estado == 'Resuelta'}"
+                                      class="badge bg-success">
+                                Resuelta
+                            </span>
+
+                            </td>
+
+
+                            <!-- ACCIONES -->
+                            <td class="text-center">
+
+                                <!-- EDITAR -->
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary me-1"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#modalEditar-' + ${incidencia.id}"
+                                        title="Editar">
+
+                                    <i class="fas fa-pen"></i>
+
+                                </button>
+
+
+                                <!-- ELIMINAR -->
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#modalEliminar-' + ${incidencia.id}"
+                                        title="Eliminar">
+
+                                    <i class="fas fa-trash"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- SIN REGISTROS -->
+                        <tr th:if="${#lists.isEmpty(incidencias)}">
+
+                            <td colspan="6"
+                                class="text-center py-5 text-muted">
+
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+
+                                <p class="mb-0">
+                                    No hay incidencias registradas.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- MODALES -->
+    <!-- ========================================================= -->
+
+    <div th:each="incidencia : ${incidencias}">
+
+
+        <!-- ========================================================= -->
+        <!-- MODAL EDITAR -->
+        <!-- ========================================================= -->
+
+        <div class="modal fade"
+             th:id="'modalEditar-' + ${incidencia.id}"
+             tabindex="-1"
+             aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div class="modal-content">
+
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title fw-bold">
+
+                            <i class="fas fa-pen text-primary me-2"></i>
+
+                            Editar Incidencia
+
+                        </h5>
+
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+
+                    <form th:action="@{/incidencia/historial/editar}"
+                          method="post">
+
+                        <div class="modal-body">
+
+
+                            <!-- ID -->
+                            <input type="hidden"
+                                   name="id"
+                                   th:value="${incidencia.id}">
+
+
+                            <!-- MAQUINARIA -->
+                            <div class="mb-3">
+
+                                <label class="form-label small fw-bold text-secondary">
+                                    Maquinaria
+                                </label>
+
+                                <select name="maquinaId"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Seleccione una maquinaria
+                                    </option>
+
+
+                                    <option th:each="maquinaria : ${maquinarias}"
+                                            th:value="${maquinaria.idMaquinaria}"
+                                            th:text="${maquinaria.nombre + ' - ' + maquinaria.codigoInterno}"
+                                            th:selected="${incidencia.maquinaria != null and incidencia.maquinaria.idMaquinaria == maquinaria.idMaquinaria}">
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- SEVERIDAD -->
+                            <div class="mb-3">
+
+                                <label class="form-label small fw-bold text-secondary">
+                                    Severidad
+                                </label>
+
+                                <select name="severidad"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Seleccione una severidad
+                                    </option>
+
+                                    <option value="Alta"
+                                            th:selected="${incidencia.severidad == 'Alta'}">
+                                        Alta
+                                    </option>
+
+                                    <option value="Media"
+                                            th:selected="${incidencia.severidad == 'Media'}">
+                                        Media
+                                    </option>
+
+                                    <option value="Baja"
+                                            th:selected="${incidencia.severidad == 'Baja'}">
+                                        Baja
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- FECHA -->
+                            <div class="mb-3">
+
+                                <label class="form-label small fw-bold text-secondary">
+                                    Fecha
+                                </label>
+
+                                <input type="date"
+                                       name="fecha"
+                                       class="form-control"
+                                       th:value="${incidencia.fecha}"
+                                       required>
+
+                            </div>
+
+
+                            <!-- UBICACIÓN -->
+                            <div class="mb-3">
+
+                                <label class="form-label small fw-bold text-secondary">
+                                    Ubicación
+                                </label>
+
+                                <input type="text"
+                                       name="ubicacion"
+                                       class="form-control"
+                                       th:value="${incidencia.ubicacion}"
+                                       placeholder="Ingrese la ubicación"
+                                       required>
+
+                            </div>
+
+
+                            <!-- DESCRIPCIÓN -->
+                            <div class="mb-3">
+
+                                <label class="form-label small fw-bold text-secondary">
+                                    Descripción
+                                </label>
+
+                                <textarea name="descripcion"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Describe la incidencia..."
+                                          th:text="${incidencia.descripcion}"
+                                          required></textarea>
+
+                            </div>
+
+
+                            <!-- ESTADO -->
+                            <div class="mb-3">
+
+                                <label class="form-label small fw-bold text-secondary">
+                                    Estado
+                                </label>
+
+                                <select name="estado"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Seleccione un estado
+                                    </option>
+
+                                    <option value="Pendiente"
+                                            th:selected="${incidencia.estado == 'Pendiente'}">
+                                        Pendiente
+                                    </option>
+
+                                    <option value="En proceso"
+                                            th:selected="${incidencia.estado == 'En proceso'}">
+                                        En proceso
+                                    </option>
+
+                                    <option value="Resuelta"
+                                            th:selected="${incidencia.estado == 'Resuelta'}">
+                                        Resuelta
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="modal-footer">
+
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+
+                                Cancelar
+
+                            </button>
+
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                <i class="fas fa-save me-2"></i>
+
+                                Guardar cambios
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================================================= -->
+        <!-- MODAL ELIMINAR -->
+        <!-- ========================================================= -->
+
+        <div class="modal fade"
+             th:id="'modalEliminar-' + ${incidencia.id}"
+             tabindex="-1"
+             aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+
+                <div class="modal-content">
+
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title fw-bold">
+
+                            <i class="fas fa-trash text-danger me-2"></i>
+
+                            Eliminar Incidencia
+
+                        </h5>
+
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+
+                    <form th:action="@{/incidencia/historial/eliminar}"
+                          method="post">
+
+                        <div class="modal-body text-center">
+
+                            <input type="hidden"
+                                   name="id"
+                                   th:value="${incidencia.id}">
+
+
+                            <i class="fas fa-circle-exclamation text-danger fa-3x mb-3"></i>
+
+
+                            <h5>
+                                ¿Está seguro de eliminar esta incidencia?
+                            </h5>
+
+
+                            <p class="text-muted mb-0">
+                                Esta acción no se puede deshacer.
+                            </p>
+
+                        </div>
+
+
+                        <div class="modal-footer">
+
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+
+                                Cancelar
+
+                            </button>
+
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+
+                                <i class="fas fa-trash me-2"></i>
+
+                                Eliminar
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================= -->
+    <!-- MODAL CREAR -->
+    <!-- ========================================================= -->
+
+    <div class="modal fade"
+         id="modalCrear"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title fw-bold">
+
+                        <i class="fas fa-plus-circle text-success me-2"></i>
+
+                        Nueva Incidencia
+
+                    </h5>
+
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <form th:action="@{/incidencia/historial/guardar}"
+                      method="post">
+
+                    <div class="modal-body">
+
+
+                        <!-- MAQUINARIA -->
+                        <div class="mb-3">
+
+                            <label class="form-label small fw-bold text-secondary">
+                                Maquinaria
+                            </label>
+
+                            <select name="maquinaId"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Seleccione una maquinaria
+                                </option>
+
+
+                                <option th:each="maquinaria : ${maquinarias}"
+                                        th:value="${maquinaria.idMaquinaria}"
+                                        th:text="${maquinaria.nombre + ' - ' + maquinaria.codigoInterno}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- SEVERIDAD -->
+                        <div class="mb-3">
+
+                            <label class="form-label small fw-bold text-secondary">
+                                Severidad
+                            </label>
+
+                            <select name="severidad"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Seleccione una severidad
+                                </option>
+
+                                <option value="Alta">
+                                    Alta
+                                </option>
+
+                                <option value="Media">
+                                    Media
+                                </option>
+
+                                <option value="Baja">
+                                    Baja
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- FECHA -->
+                        <div class="mb-3">
+
+                            <label class="form-label small fw-bold text-secondary">
+                                Fecha
+                            </label>
+
+                            <input type="date"
+                                   name="fecha"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+
+                        <!-- UBICACIÓN -->
+                        <div class="mb-3">
+
+                            <label class="form-label small fw-bold text-secondary">
+                                Ubicación
+                            </label>
+
+                            <input type="text"
+                                   name="ubicacion"
+                                   class="form-control"
+                                   placeholder="Ingrese la ubicación"
+                                   required>
+
+                        </div>
+
+
+                        <!-- DESCRIPCIÓN -->
+                        <div class="mb-3">
+
+                            <label class="form-label small fw-bold text-secondary">
+                                Descripción
+                            </label>
+
+                            <textarea name="descripcion"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Describe la incidencia..."
+                                      required></textarea>
+
+                        </div>
+
+
+                        <!-- ESTADO -->
+                        <div class="mb-3">
+
+                            <label class="form-label small fw-bold text-secondary">
+                                Estado Inicial
+                            </label>
+
+                            <select name="estado"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Seleccione un estado
+                                </option>
+
+                                <option value="Pendiente">
+                                    Pendiente
+                                </option>
+
+                                <option value="En proceso">
+                                    En proceso
+                                </option>
+
+                                <option value="Resuelta">
+                                    Resuelta
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+
+                            Cancelar
+
+                        </button>
+
+
+                        <button type="submit"
+                                class="btn btn-success">
+
+                            <i class="fas fa-save me-2"></i>
+
+                            Registrar incidencia
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+    ```
+
+</div>
+
+</body>
+</html>

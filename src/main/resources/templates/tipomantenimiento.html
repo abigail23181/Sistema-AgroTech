@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <title>Tipos de Mantenimiento - AgroTech</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,9 +17,14 @@
             background: rgba(0, 0, 0, 0.5);
         }
     </style>
+=======
+    <title>Tipos de Mantenimiento | AgroTech</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+>>>>>>> feature/HU-SCRUM-11
 </head>
 <body class="d-flex">
 
+<<<<<<< HEAD
 <!-- SIDEBAR -->
 <div class="sidebar p-3 d-flex flex-column justify-content-between">
     <div>
@@ -39,6 +45,251 @@
         <a th:href="@{/perfil}" class="text-white mb-1"><i class="bi bi-person-circle me-2"></i> Ver Perfil</a>
         <a th:href="@{/logout}" class="text-danger"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
     </div>
+=======
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-4 text-primary">
+                        <i class="bi bi-tools fs-2"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0 text-dark">Tipos de Mantenimiento</h3>
+                        <p class="text-muted small mb-0">Gestiona la clasificación de actividades preventivas y correctivas en AgroTech.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-primary px-4 py-2 rounded-3 shadow-sm font-weight-bold" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                    <i class="bi bi-plus-circle-fill me-2"></i>Nuevo Tipo
+                </button>
+            </div>
+        </div>
+
+        <div th:if="${mensaje}"
+             th:class="'alert alert-' + ${tipoMensaje} + ' alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4'"
+             role="alert">
+            <i th:class="${tipoMensaje == 'danger'} ? 'bi bi-exclamation-triangle-fill me-2' : 'bi bi-check-circle-fill me-2'"></i>
+            <span th:text="${mensaje}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                <span class="text-muted small font-monospace">
+                    TOTAL REGISTRADOS: <strong class="text-dark" th:text="${#lists.size(lista)}">0</strong>
+                </span>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary text-uppercase small font-weight-bold">
+                        <tr>
+                            <th class="py-3 ps-4">ID</th>
+                            <th class="py-3">Nombre</th>
+                            <th class="py-3">Categoría</th>
+                            <th class="py-3">Descripción</th>
+                            <th class="py-3">Estado</th>
+                            <th class="py-3 text-end pe-4">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${lista}">
+                            <td class="ps-4 fw-bold text-muted" th:text="'#' + ${item.id}">#1</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-light p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-gear-wide-connected text-primary"></i>
+                                    </div>
+                                    <span class="fw-semibold text-dark" th:text="${item.nombre}">Nombre Tipo</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:if="${item.categoria == 'Preventivo'}" class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-shield-check me-1"></i>Preventivo
+                                </span>
+                                <span th:if="${item.categoria == 'Correctivo'}" class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-wrench me-1"></i>Correctivo
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-muted small" th:text="${item.descripcion ?: 'Sin descripción'}">Descripción</span>
+                            </td>
+                            <td>
+                                <span th:if="${item.activo}" class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-check-circle me-1"></i>Activo
+                                </span>
+                                <span th:unless="${item.activo}" class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-x-circle me-1"></i>Inactivo
+                                </span>
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <button class="btn btn-light btn-sm rounded-circle me-1 shadow-sm text-primary"
+                                        title="Editar"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#modalEditar-' + ${item.id}">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button class="btn btn-light btn-sm rounded-circle shadow-sm text-danger"
+                                        title="Eliminar"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="'#modalEliminar-' + ${item.id}">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+
+                                <div class="modal fade text-start" th:id="'modalEditar-' + ${item.id}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content border-0 shadow-lg rounded-4">
+                                            <form th:action="@{/tipomantenimiento/editar}" method="post">
+                                                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                                                    <h5 class="modal-title fw-bold text-dark">
+                                                        <i class="bi bi-pencil-square text-primary me-2"></i>Editar Tipo
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body p-4">
+                                                    <input type="hidden" name="id" th:value="${item.id}">
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold text-secondary">Nombre *</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-tag text-muted"></i></span>
+                                                            <input type="text" name="nombre" class="form-control border-start-0" th:value="${item.nombre}" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold text-secondary">Categoría *</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-diagram-3 text-muted"></i></span>
+                                                            <select name="categoria" class="form-select border-start-0" required>
+                                                                <option value="Preventivo" th:selected="${item.categoria == 'Preventivo'}">Preventivo</option>
+                                                                <option value="Correctivo" th:selected="${item.categoria == 'Correctivo'}">Correctivo</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold text-secondary">Estado *</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-toggle-on text-muted"></i></span>
+                                                            <select name="activo" class="form-select border-start-0" required>
+                                                                <option value="true" th:selected="${item.activo}">Activo</option>
+                                                                <option value="false" th:selected="${!item.activo}">Inactivo</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold text-secondary">Descripción</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-card-text text-muted"></i></span>
+                                                            <textarea name="descripcion" class="form-control border-start-0" rows="3" th:text="${item.descripcion}"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                                                    <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Cambios</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade text-start" th:id="'modalEliminar-' + ${item.id}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content border-0 shadow-lg rounded-4">
+                                            <div class="modal-body text-center p-4">
+                                                <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex p-3 mb-3">
+                                                    <i class="bi bi-exclamation-triangle-fill fs-2"></i>
+                                                </div>
+                                                <h5 class="fw-bold text-dark mb-1">¿Eliminar Tipo?</h5>
+                                                <p class="text-muted small mb-0">Esta acción no se podrá deshacer.</p>
+                                            </div>
+                                            <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                                                <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
+                                                <form th:action="@{/tipomantenimiento/eliminar}" method="post" class="d-inline">
+                                                    <input type="hidden" name="id" th:value="${item.id}">
+                                                    <button type="submit" class="btn btn-danger rounded-3 px-4">Sí, eliminar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(lista)}">
+                            <td colspan="6" class="text-center py-5">
+                                <div class="py-3">
+                                    <i class="bi bi-inbox text-muted display-4 d-block mb-2"></i>
+                                    <h6 class="fw-bold text-secondary">No hay tipos de mantenimiento registrados</h6>
+                                    <p class="text-muted small">Comienza agregando un nuevo tipo con el botón superior.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <form th:action="@{/tipomantenimiento/guardar}" th:object="${tipoMantenimiento}" method="post">
+                    <div class="modal-header border-0 pb-0 pt-4 px-4">
+                        <h5 class="modal-title fw-bold text-dark">
+                            <i class="bi bi-plus-circle-fill text-primary me-2"></i>Nuevo Tipo de Mantenimiento
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Nombre *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-tag text-muted"></i></span>
+                                <input type="text" th:field="*{nombre}" class="form-control border-start-0" placeholder="Ej. Cambio de Aceite" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Categoría *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-diagram-3 text-muted"></i></span>
+                                <select th:field="*{categoria}" class="form-select border-start-0" required>
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="Preventivo">Preventivo</option>
+                                    <option value="Correctivo">Correctivo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Descripción</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-card-text text-muted"></i></span>
+                                <textarea th:field="*{descripcion}" class="form-control border-start-0" rows="3" placeholder="Detalles de este tipo de mantenimiento..."></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                        <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+>>>>>>> feature/HU-SCRUM-11
 </div>
 
 <!-- CONTENIDO PRINCIPAL -->
