@@ -5,37 +5,53 @@ import Grupo4.Sistema.AgroTech.Repositorios.TipoMantenimientoRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.ITipoMantenimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
 public class TipoMantenimientoServiceImpl implements ITipoMantenimientoService {
 
     @Autowired
-    private TipoMantenimientoRepository repository;
+    private TipoMantenimientoRepository tipoMantenimientoRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TipoMantenimiento> listarTodos() {
-        return repository.findAll();
+        return tipoMantenimientoRepository.findAll();
     }
 
+    // CA06: Filtra solo los tipos de mantenimiento activos para asociarlos en incidencias/alertas
     @Override
+    @Transactional(readOnly = true)
     public List<TipoMantenimiento> listarActivos() {
-        return repository.findByActivoTrue();
+        return tipoMantenimientoRepository.findByActivoTrue();
     }
 
     @Override
-    public TipoMantenimiento guardar(TipoMantenimiento tipo) {
-        if (repository.existsByNombreIgnoreCase(tipo.getNombre())) {
-            throw new IllegalArgumentException("El nombre del tipo de mantenimiento ya existe.");
+    @Transactional(readOnly = true)
+    public TipoMantenimiento obtenerPorId(Long id) {
+        return tipoMantenimientoRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public TipoMantenimiento guardar(TipoMantenimiento tipoMantenimiento) {
+        return tipoMantenimientoRepository.save(tipoMantenimiento);
+    }
+
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+        tipoMantenimientoRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existePorNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            return false;
         }
-        return repository.save(tipo);
-    }
-
-    @Override
-    public TipoMantenimiento cambiarEstado(Long id, Boolean estado) {
-        TipoMantenimiento tipo = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tipo de mantenimiento no encontrado"));
-        tipo.setActivo(estado);
-        return repository.save(tipo);
+        return tipoMantenimientoRepository.existsByNombreIgnoreCase(nombre.trim());
     }
 }

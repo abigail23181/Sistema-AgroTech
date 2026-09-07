@@ -1,9 +1,9 @@
 package Grupo4.Sistema.AgroTech.Repositorios;
 
-import Grupo4.Sistema.AgroTech.Model.Empresa;
+import Grupo4.Sistema.AgroTech.Model.Alerta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
+public interface AlertaRepository extends JpaRepository<Alerta, Long> {
 }

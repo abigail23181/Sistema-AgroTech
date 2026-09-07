@@ -8,33 +8,98 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/tipos-mantenimiento")
+@RequestMapping("/tipomantenimiento")
 public class TipoMantenimientoController {
 
     @Autowired
-    private ITipoMantenimientoService service;
+    private ITipoMantenimientoService tipoMantenimientoService;
+
 
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("lista", service.listarTodos());
-        return "tipos-mantenimiento/index";
+        if (!model.containsAttribute("tipoMantenimiento")) {
+            model.addAttribute("tipoMantenimiento", new TipoMantenimiento());
+        }
+        model.addAttribute("lista", tipoMantenimientoService.listarTodos());
+        return "tipomantenimiento";
     }
 
     @PostMapping("/guardar")
-    public String guardar(@Valid @ModelAttribute TipoMantenimiento tipoMantenimiento, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("lista", service.listarTodos());
-            return "tipos-mantenimiento/index";
+    public String guardar(@Valid @ModelAttribute("tipoMantenimiento") TipoMantenimiento tipoMantenimiento,
+                          BindingResult result,
+                          RedirectAttributes redirectAttrs) {
+
+
+        if (tipoMantenimiento.getNombre() != null && !tipoMantenimiento.getNombre().isBlank()) {
+            if (tipoMantenimientoService.existePorNombre(tipoMantenimiento.getNombre().trim())) {
+                result.rejectValue("nombre", "error.nombre", "Ya existe un tipo de mantenimiento con este nombre.");
+            }
         }
-        service.guardar(tipoMantenimiento);
-        return "redirect:/tipos-mantenimiento";
+
+
+        if (result.hasErrors()) {
+            String errorMsg = result.getAllErrors().get(0).getDefaultMessage();
+            redirectAttrs.addFlashAttribute("mensaje", errorMsg);
+            redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
+            return "redirect:/tipomantenimiento";
+        }
+
+        tipoMantenimientoService.guardar(tipoMantenimiento);
+        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento registrado exitosamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+        return "redirect:/tipomantenimiento";
+    }
+
+    @PostMapping("/editar")
+    public String editar(@Valid @ModelAttribute("tipoMantenimiento") TipoMantenimiento tipoMantenimiento,
+                         BindingResult result,
+                         RedirectAttributes redirectAttrs) {
+
+        if (tipoMantenimiento.getNombre() != null && !tipoMantenimiento.getNombre().isBlank()) {
+            TipoMantenimiento existente = tipoMantenimientoService.obtenerPorId(tipoMantenimiento.getId());
+
+            if (existente != null && !existente.getNombre().equalsIgnoreCase(tipoMantenimiento.getNombre().trim())) {
+                if (tipoMantenimientoService.existePorNombre(tipoMantenimiento.getNombre().trim())) {
+                    result.rejectValue("nombre", "error.nombre", "Ya existe un tipo de mantenimiento con este nombre.");
+                }
+            }
+        }
+
+        if (result.hasErrors()) {
+            String errorMsg = result.getAllErrors().get(0).getDefaultMessage();
+            redirectAttrs.addFlashAttribute("mensaje", errorMsg);
+            redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
+            return "redirect:/tipomantenimiento";
+        }
+
+        tipoMantenimientoService.guardar(tipoMantenimiento);
+        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento actualizado correctamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+        return "redirect:/tipomantenimiento";
     }
 
     @PostMapping("/estado/{id}")
-    public String cambiarEstado(@PathVariable Long id, @RequestParam Boolean activo) {
-        service.cambiarEstado(id, activo);
-        return "redirect:/tipos-mantenimiento";
+    public String cambiarEstado(@PathVariable("id") Long id,
+                                @RequestParam("activo") Boolean activo,
+                                RedirectAttributes redirectAttrs) {
+        TipoMantenimiento tm = tipoMantenimientoService.obtenerPorId(id);
+        if (tm != null) {
+            tm.setActivo(activo);
+            tipoMantenimientoService.guardar(tm);
+            redirectAttrs.addFlashAttribute("mensaje", "Estado actualizado correctamente");
+            redirectAttrs.addFlashAttribute("tipoMensaje", "warning");
+        }
+        return "redirect:/tipomantenimiento";
+    }
+
+    @PostMapping("/eliminar")
+    public String eliminar(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
+        tipoMantenimientoService.eliminar(id);
+        redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento eliminado correctamente");
+        redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
+        return "redirect:/tipomantenimiento";
     }
 }

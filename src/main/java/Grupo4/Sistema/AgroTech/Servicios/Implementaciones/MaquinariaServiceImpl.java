@@ -7,31 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MaquinariaServiceImpl implements IMaquinariaService {
 
-    private final MaquinariaRepository maquinariaRepository;
-
     @Autowired
-    public MaquinariaServiceImpl(MaquinariaRepository maquinariaRepository) {
-        this.maquinariaRepository = maquinariaRepository;
-    }
+    private MaquinariaRepository maquinariaRepository;
 
     @Override
-    public List<Maquinaria> obtenerTodas() {
+    public List<Maquinaria> listarTodas() {
         return maquinariaRepository.findAll();
     }
 
     @Override
-    public Optional<Maquinaria> obtenerPorId(Long id) {
-        return maquinariaRepository.findById(id);
-    }
-
-    @Override
-    public Maquinaria guardar(Maquinaria maquinaria) {
-        return maquinariaRepository.save(maquinaria);
+    public void guardar(Maquinaria maquinaria) {
+        maquinariaRepository.save(maquinaria);
     }
 
     @Override

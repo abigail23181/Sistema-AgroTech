@@ -1,8 +1,8 @@
 package Grupo4.Sistema.AgroTech.Servicios.Implementaciones;
 
-import Grupo4.Sistema.AgroTech.Model.Empresa;
-import Grupo4.Sistema.AgroTech.Repositorios.EmpresaRepository;
-import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IEmpresaService;
+import Grupo4.Sistema.AgroTech.Model.Alerta;
+import Grupo4.Sistema.AgroTech.Repositorios.AlertaRepository;
+import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IAlertaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,21 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class EmpresaServiceImpl implements IEmpresaService {
+public class AlertaServiceImpl implements IAlertaService {
 
     @Autowired
-    private EmpresaRepository repository;
+    private AlertaRepository repository;
 
     @Override
     @Transactional(readOnly = true)
-    public List<Empresa> listarTodas() {
+    public List<Alerta> listarTodas() {
         return repository.findAll();
     }
 
     @Override
     @Transactional
-    public void guardar(Empresa empresa) {
-        repository.save(empresa);
+    public void guardar(Alerta alerta) {
+        repository.save(alerta);
     }
 
     @Override
