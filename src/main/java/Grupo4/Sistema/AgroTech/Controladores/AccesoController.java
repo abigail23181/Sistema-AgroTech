@@ -10,77 +10,156 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AccesoController {
 
+    // ==============================
+    // DATOS DEL ADMINISTRADOR
+    // ==============================
+
+    private static final String CORREO_ADMIN =
+            "admin@agrotech.com";
+
+    private static final String PASSWORD_ADMIN =
+            "123456";
+
+
+    // ==============================
+    // INICIO
+    // ==============================
+
     @GetMapping("/")
     public String inicio(HttpSession session) {
+
         if (session.getAttribute("usuarioLogueado") != null) {
             return "redirect:/dashboard";
         }
+
         return "redirect:/login";
     }
 
+
+    // ==============================
+    // MOSTRAR LOGIN
+    // ==============================
+
     @GetMapping("/login")
     public String login(HttpSession session) {
+
         if (session.getAttribute("usuarioLogueado") != null) {
             return "redirect:/dashboard";
         }
+
         return "login";
     }
 
+
+    // ==============================
+    // PROCESAR LOGIN
+    // ==============================
+
     @PostMapping("/login")
-    public String procesarLogin(@RequestParam("username") String username,
-                                @RequestParam("password") String password,
-                                HttpSession session) {
+    public String procesarLogin(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            HttpSession session) {
 
-        boolean correoValido = username.endsWith("@agrotech.com") || username.endsWith("@gmail.com");
+        username = username.trim();
 
-        if (correoValido && "123456".equals(password)) {
-            session.setAttribute("usuarioLogueado", username);
+        if (CORREO_ADMIN.equalsIgnoreCase(username)
+                && PASSWORD_ADMIN.equals(password)) {
+
+            session.setAttribute(
+                    "usuarioLogueado",
+                    CORREO_ADMIN
+            );
+
+            session.setAttribute(
+                    "rol",
+                    "ADMINISTRADOR"
+            );
+
             return "redirect:/dashboard";
         }
 
         return "redirect:/login?error=true";
     }
 
+
+    // ==============================
+    // REGISTRO
+    // ==============================
+
     @GetMapping("/registro")
     public String mostrarRegistro() {
         return "registro";
     }
 
+
     @PostMapping("/registro")
-    public String procesarRegistro(@RequestParam("nombre") String nombre,
-                                   @RequestParam("username") String username,
-                                   @RequestParam("password") String password) {
-        if (!username.endsWith("@agrotech.com") && !username.endsWith("@gmail.com")) {
+    public String procesarRegistro(
+            @RequestParam("nombre") String nombre,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password) {
+
+        if (!username.endsWith("@agrotech.com")
+                && !username.endsWith("@gmail.com")) {
+
             return "redirect:/registro?errorCorreo=true";
         }
+
         return "redirect:/login?exito=Cuenta+creada+exitosamente";
     }
+
+
+    // ==============================
+    // RECUPERAR
+    // ==============================
 
     @GetMapping("/recuperar")
     public String mostrarRecuperar() {
         return "recuperar";
     }
 
+
     @PostMapping("/recuperar")
-    public String procesarRecuperar(@RequestParam("username") String username) {
-        if (!username.endsWith("@agrotech.com") && !username.endsWith("@gmail.com")) {
+    public String procesarRecuperar(
+            @RequestParam("username") String username) {
+
+        if (!username.endsWith("@agrotech.com")
+                && !username.endsWith("@gmail.com")) {
+
             return "redirect:/recuperar?errorCorreo=true";
         }
+
         return "redirect:/login?exito=Enlace+enviado+a+tu+correo";
     }
 
+
+    // ==============================
+    // PERFIL
+    // ==============================
+
     @GetMapping("/perfil")
-    public String verPerfil(HttpSession session, Model model) {
+    public String verPerfil(
+            HttpSession session,
+            Model model) {
+
         if (session.getAttribute("usuarioLogueado") == null) {
             return "redirect:/login";
         }
-        model.addAttribute("usuario", session.getAttribute("usuarioLogueado"));
+
+        model.addAttribute(
+                "usuario",
+                session.getAttribute("usuarioLogueado")
+        );
+
         return "perfil";
     }
 
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
+
         session.invalidate();
+
         return "redirect:/login?logout=true";
     }
 }

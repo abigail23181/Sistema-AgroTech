@@ -2,6 +2,7 @@ package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
 @Entity
@@ -22,31 +23,85 @@ public class Incidencia {
     @Column(nullable = false, length = 150)
     private String ubicacion;
 
+    @Column(nullable = false, length = 255)
+    private String descripcion;
+
     @Column(nullable = false, length = 30)
     private String estado;
 
-    public Incidencia() {}
+    // RELACIÓN CON MAQUINARIA
+    @ManyToOne
+    @JoinColumn(name = "maquina_id", nullable = false)
+    private Maquinaria maquinaria;
 
-    public Incidencia(Long id, String severidad, LocalDate fecha, String ubicacion, String estado) {
+    public Incidencia() {
+    }
+
+    public Incidencia(Long id, String severidad, LocalDate fecha,
+                      String ubicacion, String descripcion,
+                      String estado, Maquinaria maquinaria) {
         this.id = id;
         this.severidad = severidad;
         this.fecha = fecha;
         this.ubicacion = ubicacion;
+        this.descripcion = descripcion;
+        this.estado = estado;
+        this.maquinaria = maquinaria;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSeveridad() {
+        return severidad;
+    }
+
+    public void setSeveridad(String severidad) {
+        this.severidad = severidad;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Maquinaria getMaquinaria() {
+        return maquinaria;
+    }
 
-    public String getSeveridad() { return severidad; }
-    public void setSeveridad(String severidad) { this.severidad = severidad; }
-
-    public LocalDate getFecha() { return fecha; }
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
-
-    public String getUbicacion() { return ubicacion; }
-    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
-
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public void setMaquinaria(Maquinaria maquinaria) {
+        this.maquinaria = maquinaria;
+    }
 }
