@@ -6,16 +6,24 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
+<<<<<<< HEAD
+@Table(name = "tipo_mantenimiento")
+=======
 @Table(name = "tipomantenimiento")
+>>>>>>> feature/HU-SCRUM-11
 public class TipoMantenimiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+<<<<<<< HEAD
+    @Column(nullable = false)
+=======
     @NotBlank(message = "El nombre del tipo de mantenimiento es obligatorio.")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres.")
     @Column(nullable = false, unique = true, length = 100)
+>>>>>>> feature/HU-SCRUM-11
     private String nombre;
 
     @NotBlank(message = "Debe seleccionar una categoría (preventivo o correctivo).")
@@ -26,10 +34,24 @@ public class TipoMantenimiento {
     private String descripcion;
 
     @Column(nullable = false)
-    private Boolean activo = true;
+    private boolean activo = true;
+
+    // Campo de la base de datos que está fallando
+    @Column(name = "clasificacion", nullable = false)
+    private String clasificacion = "GENERAL";
+
+    // Asigna un valor por defecto antes de guardar en MySQL
+    @PrePersist
+    public void prePersist() {
+        if (this.clasificacion == null || this.clasificacion.trim().isEmpty()) {
+            this.clasificacion = "GENERAL";
+        }
+    }
 
     public TipoMantenimiento() {}
 
+<<<<<<< HEAD
+=======
     public TipoMantenimiento(Long id, String nombre, String categoria, String descripcion, Boolean activo) {
         this.id = id;
         this.nombre = nombre;
@@ -38,6 +60,7 @@ public class TipoMantenimiento {
         this.activo = activo;
     }
 
+>>>>>>> feature/HU-SCRUM-11
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -50,6 +73,9 @@ public class TipoMantenimiento {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public Boolean getActivo() { return activo; }
-    public void setActivo(Boolean activo) { this.activo = activo; }
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
+
+    public String getClasificacion() { return clasificacion; }
+    public void setClasificacion(String clasificacion) { this.clasificacion = clasificacion; }
 }

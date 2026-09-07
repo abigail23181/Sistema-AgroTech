@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios - AgroTech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        .sidebar { min-width: 260px; min-height: 100vh; background-color: #1e293b; color: #fff; }
+        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; }
+        .sidebar a:hover, .sidebar a.active { background-color: #334155; color: #fff; }
+
+        .modal.show-manual {
+            display: block !important;
+            background: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="d-flex">
+
+<!-- SIDEBAR -->
+<div class="sidebar p-3 d-flex flex-column justify-content-between">
+    <div>
+        <h4 class="fw-bold text-white mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-tree-fill text-success"></i> AgroTech
+        </h4>
+        <nav class="d-flex flex-column gap-1">
+            <a th:href="@{/}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            <a th:href="@{/empresas}"><i class="bi bi-building me-2"></i> Empresas</a>
+            <a th:href="@{/maquinarias}"><i class="bi bi-truck me-2"></i> Maquinarias</a>
+            <a th:href="@{/alertas}"><i class="bi bi-bell me-2"></i> Alertas</a>
+            <a th:href="@{/incidencias}"><i class="bi bi-exclamation-triangle me-2"></i> Incidencias</a>
+            <a th:href="@{/tipomantenimiento}"><i class="bi bi-tools me-2"></i> Mantenimientos</a>
+            <a th:href="@{/usuarios}" class="active"><i class="bi bi-people-fill me-2"></i> Usuarios y Roles</a>
+        </nav>
+    </div>
+    <div class="pt-3 border-top border-secondary">
+        <a th:href="@{/perfil}" class="text-white mb-1"><i class="bi bi-person-circle me-2"></i> Ver Perfil</a>
+        <a th:href="@{/logout}" class="text-danger"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
+    </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="flex-grow-1 p-4">
+
+    <!-- MENSAJE DE ÉXITO -->
+    <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${mensaje}">Usuario guardado exitosamente</span>
+        <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+    </div>
+
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-success mb-1">
+                <i class="bi bi-people-fill me-2"></i>Gestión de Usuarios y Roles
+            </h3>
+            <p class="text-muted small mb-0">Control de acceso y asignación de permisos según el rol institucional.</p>
+        </div>
+        <button type="button" class="btn btn-success rounded-pill px-4 shadow-sm" onclick="mostrarModalCrear()">
+            <i class="bi bi-person-plus-fill me-2"></i>Crear Usuario
+        </button>
+    </div>
+
+    <!-- TABLA DE USUARIOS -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Nombre Completo</th>
+                        <th>Correo Electrónico</th>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${usuarios}">
+                        <td class="ps-4 fw-semibold text-dark" th:text="${u.nombre}">Juan Pérez</td>
+                        <td th:text="${u.email}">juan.perez@agrotech.com</td>
+                        <td class="font-monospace text-secondary" th:text="${u.username}">jperez</td>
+                        <td>
+                            <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2"
+                                  th:text="${u.rol}">Administrador</span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-warning rounded-pill px-3"
+                                        type="button"
+                                        th:data-id="${u.id}"
+                                        th:data-nombre="${u.nombre}"
+                                        th:data-email="${u.email}"
+                                        th:data-username="${u.username}"
+                                        th:data-rol="${u.rol}"
+                                        onclick="mostrarModalEditar(this)">
+                                    <i class="bi bi-pencil-square me-1"></i>Editar
+                                </button>
+                                <a th:href="@{/usuarios/eliminar/{id}(id=${u.id})}"
+                                   class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                   onclick="return confirm('¿Está seguro de que desea eliminar este usuario?')">
+                                    <i class="bi bi-trash-fill me-1"></i>Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${usuarios == null or #lists.isEmpty(usuarios)}">
+                        <td colspan="5" class="text-center py-4 text-muted">
+                            <i class="bi bi-info-circle me-1"></i> No hay usuarios registrados en el sistema.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PARA CREAR / EDITAR USUARIO -->
+<div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="modalUsuarioLabel">
+                    <i class="bi bi-person-plus-fill text-success me-2"></i>Crear Usuario
+                </h5>
+                <button type="button" class="btn-close" onclick="cerrarModalUsuario()"></button>
+            </div>
+            <form th:action="@{/usuarios/guardar}" method="post">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="id" name="id">
+
+                    <!-- NOMBRE COMPLETO -->
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label small fw-bold text-secondary">Nombre Completo *</label>
+                        <input type="text" class="form-control rounded-3" id="nombre" name="nombre" placeholder="Ej. Carlos Mendoza" required>
+                    </div>
+
+                    <!-- CORREO ELECTRÓNICO (Cambiado a name="email") -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label small fw-bold text-secondary">Correo Electrónico *</label>
+                        <input type="email" class="form-control rounded-3" id="email" name="email" placeholder="ejemplo@agrotech.com" required>
+                    </div>
+
+                    <!-- USUARIO DE ACCESO (Cambiado a name="username") -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label small fw-bold text-secondary">Usuario de Acceso *</label>
+                        <input type="text" class="form-control rounded-3" id="username" name="username" placeholder="cmendoza" required>
+                    </div>
+
+                    <!-- CONTRASEÑA -->
+                    <div class="mb-3">
+                        <label for="clave" class="form-label small fw-bold text-secondary">Contraseña <span id="lblClaveReq">*</span></label>
+                        <input type="password" class="form-control rounded-3" id="clave" name="clave" placeholder="••••••••">
+                    </div>
+
+                    <!-- ROL DEL USUARIO -->
+                    <div class="mb-3">
+                        <label for="rol" class="form-label small fw-bold text-secondary">Rol del Usuario *</label>
+                        <select class="form-select rounded-3" id="rol" name="rol" required>
+                            <option value="" disabled selected>Seleccione un rol...</option>
+                            <option value="Administrador">Administrador</option>
+                            <option value="Jefe de Taller">Jefe de Taller</option>
+                            <option value="Mecánico">Mecánico</option>
+                            <option value="Operador">Operador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 pe-4 pb-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4" onclick="cerrarModalUsuario()">Cancelar</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">Guardar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function abrirModalUsuario() {
+        const modalEl = document.getElementById('modalUsuario');
+        if (window.bootstrap && window.bootstrap.Modal) {
+            let m = bootstrap.Modal.getOrCreateInstance(modalEl);
+            m.show();
+        } else {
+            modalEl.classList.add('show', 'show-manual');
+        }
+    }
+
+    function cerrarModalUsuario() {
+        const modalEl = document.getElementById('modalUsuario');
+        if (window.bootstrap && window.bootstrap.Modal) {
+            let m = bootstrap.Modal.getInstance(modalEl);
+            if (m) m.hide();
+        }
+        modalEl.classList.remove('show', 'show-manual');
+    }
+
+    function mostrarModalCrear() {
+        document.getElementById('id').value = '';
+        document.getElementById('nombre').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('username').value = '';
+        document.getElementById('clave').value = '';
+        document.getElementById('clave').required = true;
+        document.getElementById('lblClaveReq').textContent = '*';
+        document.getElementById('rol').value = '';
+        document.getElementById('modalUsuarioLabel').innerHTML = '<i class="bi bi-person-plus-fill text-success me-2"></i>Crear Usuario';
+
+        abrirModalUsuario();
+    }
+
+    function mostrarModalEditar(btn) {
+        document.getElementById('id').value = btn.getAttribute('data-id') || '';
+        document.getElementById('nombre').value = btn.getAttribute('data-nombre') || '';
+        document.getElementById('email').value = btn.getAttribute('data-email') || '';
+        document.getElementById('username').value = btn.getAttribute('data-username') || '';
+        document.getElementById('clave').value = '';
+        document.getElementById('clave').required = false;
+        document.getElementById('lblClaveReq').textContent = '(Opcional)';
+        document.getElementById('rol').value = btn.getAttribute('data-rol') || '';
+        document.getElementById('modalUsuarioLabel').innerHTML = '<i class="bi bi-pencil-square text-warning me-2"></i>Editar Usuario';
+
+        abrirModalUsuario();
+    }
+</script>
+</body>
+</html>

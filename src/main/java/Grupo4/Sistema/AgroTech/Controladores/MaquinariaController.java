@@ -11,17 +11,28 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 
 @Controller
+<<<<<<< HEAD
+@RequestMapping({"/maquinaria", "/maquinarias"})
+=======
 @RequestMapping({"/maquinarias", "/maquinaria"})
+>>>>>>> feature/HU-SCRUM-11
 public class MaquinariaController {
 
     @Autowired
     private IMaquinariaService maquinariaService;
 
+<<<<<<< HEAD
+    @GetMapping({"", "/"})
+    public String listar(Model model) {
+        model.addAttribute("maquinarias", maquinariaService.listarTodas());
+        return "maquinaria";
+=======
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("lista", maquinariaService.listarTodas());
         model.addAttribute("maquinariaNueva", new Maquinaria());
         return "maquinaria"; // Busca el archivo src/main/resources/templates/maquinaria.html
+>>>>>>> feature/HU-SCRUM-11
     }
 
     @PostMapping("/guardar")

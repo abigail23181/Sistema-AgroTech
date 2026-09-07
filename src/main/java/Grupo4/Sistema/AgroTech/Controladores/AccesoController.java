@@ -1,15 +1,21 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
-import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AccesoController {
 
+<<<<<<< HEAD
+    @GetMapping("/login")
+    public String login() {
+        return "login";// Carga templates/login.html
+    }
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+=======
     // ==============================
     // DATOS DEL ADMINISTRADOR
     // ==============================
@@ -80,6 +86,7 @@ public class AccesoController {
         }
 
         return "redirect:/login?error=true";
+>>>>>>> feature/HU-SCRUM-11
     }
 
 
@@ -88,10 +95,12 @@ public class AccesoController {
     // ==============================
 
     @GetMapping("/registro")
-    public String mostrarRegistro() {
+    public String registro() {
         return "registro";
     }
 
+<<<<<<< HEAD
+=======
 
     @PostMapping("/registro")
     public String procesarRegistro(
@@ -113,11 +122,14 @@ public class AccesoController {
     // RECUPERAR
     // ==============================
 
+>>>>>>> feature/HU-SCRUM-11
     @GetMapping("/recuperar")
-    public String mostrarRecuperar() {
+    public String recuperar() {
         return "recuperar";
     }
 
+<<<<<<< HEAD
+=======
 
     @PostMapping("/recuperar")
     public String procesarRecuperar(
@@ -131,6 +143,7 @@ public class AccesoController {
 
         return "redirect:/login?exito=Enlace+enviado+a+tu+correo";
     }
+>>>>>>> feature/HU-SCRUM-11
 
 
     // ==============================
@@ -138,6 +151,9 @@ public class AccesoController {
     // ==============================
 
     @GetMapping("/perfil")
+<<<<<<< HEAD
+    public String perfil() { return "perfil"; }
+=======
     public String verPerfil(
             HttpSession session,
             Model model) {
@@ -162,4 +178,5 @@ public class AccesoController {
 
         return "redirect:/login?logout=true";
     }
+>>>>>>> feature/HU-SCRUM-11
 }

@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Optional;
 @Controller
 @RequestMapping("/alertas")
 public class AlertaController {
@@ -20,46 +21,128 @@ public class AlertaController {
     @Autowired
     private IMaquinariaService maquinariaService;
 
+
+    
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("alertas", alertaService.listarTodas());
-        model.addAttribute("maquinarias", maquinariaService.listarTodas());
-        return "alertas"; // Nombre del archivo HTML
+    public String listarAlertas(Model model) {
+
+        model.addAttribute(
+                "alertas",
+                alertaService.listarTodas()
+        );
+
+        model.addAttribute(
+                "maquinarias",
+                maquinariaService.listarTodas()
+        );
+
+        return "/alertas";
     }
 
+
     @PostMapping("/guardar")
-    public String guardar(@ModelAttribute Alerta alerta,
-                          @RequestParam("maquinariaId") Long maquinariaId,
-                          RedirectAttributes redirectAttrs) {
-        Maquinaria m = new Maquinaria();
-        m.setIdMaquinaria(maquinariaId);
-        alerta.setMaquinaria(m);
+    public String guardarAlerta(
+            @ModelAttribute Alerta alerta,
+            @RequestParam("idMaquinaria") Long idMaquinaria,
+            RedirectAttributes attribute) {
+
+        Maquinaria maquinaria = maquinariaService
+                .buscarPorId(idMaquinaria)
+                .orElse(null);
+
+        if (maquinaria == null) {
+
+            attribute.addFlashAttribute(
+                    "mensaje",
+                    "La maquinaria seleccionada no existe."
+            );
+
+            attribute.addFlashAttribute(
+                    "tipoMensaje",
+                    "danger"
+            );
+
+            return "redirect:/alertas";
+        }
+
+        alerta.setMaquinaria(maquinaria);
 
         alertaService.guardar(alerta);
-        redirectAttrs.addFlashAttribute("mensaje", "Alerta creada exitosamente");
-        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+
+        attribute.addFlashAttribute(
+                "mensaje",
+                "¡Alerta registrada exitosamente!"
+        );
+
+        attribute.addFlashAttribute(
+                "tipoMensaje",
+                "success"
+        );
+
         return "redirect:/alertas";
     }
 
+
     @PostMapping("/editar")
-    public String editar(@ModelAttribute Alerta alerta,
-                         @RequestParam("maquinariaId") Long maquinariaId,
-                         RedirectAttributes redirectAttrs) {
-        Maquinaria m = new Maquinaria();
-        m.setIdMaquinaria(maquinariaId);
-        alerta.setMaquinaria(m);
+    public String editarAlerta(
+            @ModelAttribute Alerta alerta,
+            @RequestParam("idMaquinaria") Long idMaquinaria,
+            RedirectAttributes attribute) {
+
+        Maquinaria maquinaria = maquinariaService
+                .buscarPorId(idMaquinaria)
+                .orElse(null);
+
+        if (maquinaria == null) {
+
+            attribute.addFlashAttribute(
+                    "mensaje",
+                    "La maquinaria seleccionada no existe."
+            );
+
+            attribute.addFlashAttribute(
+                    "tipoMensaje",
+                    "danger"
+            );
+
+            return "redirect:/alertas";
+        }
+
+        alerta.setMaquinaria(maquinaria);
 
         alertaService.guardar(alerta);
-        redirectAttrs.addFlashAttribute("mensaje", "Alerta actualizada correctamente");
-        redirectAttrs.addFlashAttribute("tipoMensaje", "success");
+
+        attribute.addFlashAttribute(
+                "mensaje",
+                "¡Alerta actualizada correctamente!"
+        );
+
+        attribute.addFlashAttribute(
+                "tipoMensaje",
+                "success"
+        );
+
         return "redirect:/alertas";
     }
 
     @PostMapping("/eliminar")
-    public String eliminar(@RequestParam("id") Long id, RedirectAttributes redirectAttrs) {
-        alertaService.eliminar(id);
-        redirectAttrs.addFlashAttribute("mensaje", "Alerta eliminada correctamente");
-        redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
+    public String eliminarAlerta(
+            @RequestParam("id") Long id,
+            RedirectAttributes attribute) {
+
+        alertaService.eliminarPorId(id);
+
+        attribute.addFlashAttribute(
+                "mensaje",
+                "¡Alerta eliminada correctamente!"
+        );
+
+        attribute.addFlashAttribute(
+                "tipoMensaje",
+                "warning"
+        );
+
         return "redirect:/alertas";
     }
 }
+

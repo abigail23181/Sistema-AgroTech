@@ -1,17 +1,52 @@
 package Grupo4.Sistema.AgroTech.Model;
 
 import jakarta.persistence.*;
+<<<<<<< HEAD
+import jakarta.validation.constraints.NotBlank;
+=======
 import java.time.LocalDate;
+>>>>>>> feature/HU-SCRUM-11
 
 @Entity
-@Table(name = "maquinarias")
+@Table(name = "maquinaria")
 public class Maquinaria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_maquinaria")
     private Long idMaquinaria;
 
+<<<<<<< HEAD
+
+    @NotBlank(message = "El nombre es obligatorio")
+    private String nombre;
+
+    private String modelo;
+
+    private String estado;
+
+
+    // ==========================
+    // GETTERS Y SETTERS
+    // ==========================
+
+    public Long getIdMaquinaria() {
+        return idMaquinaria;
+    }
+
+    public void setIdMaquinaria(Long idMaquinaria) {
+        this.idMaquinaria = idMaquinaria;
+    }
+
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+=======
     @Column(name = "id_empresa")
     private Long idEmpresa;
 
@@ -85,6 +120,7 @@ public class Maquinaria {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+>>>>>>> feature/HU-SCRUM-11
 
     public String getModelo() {
         return modelo;
@@ -94,6 +130,8 @@ public class Maquinaria {
         this.modelo = modelo;
     }
 
+<<<<<<< HEAD
+=======
     public Double getHorometroInicial() {
         return horometroInicial;
     }
@@ -125,6 +163,7 @@ public class Maquinaria {
     public void setResponsableTecnico(String responsableTecnico) {
         this.responsableTecnico = responsableTecnico;
     }
+>>>>>>> feature/HU-SCRUM-11
 
     public String getEstado() {
         return estado;
@@ -133,4 +172,12 @@ public class Maquinaria {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+<<<<<<< HEAD
+
+
+    public Long getId() {
+        return idMaquinaria;
+    }
+=======
+>>>>>>> feature/HU-SCRUM-11
 }

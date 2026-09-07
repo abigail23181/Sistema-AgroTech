@@ -4,32 +4,69 @@ import Grupo4.Sistema.AgroTech.Model.Incidencia;
 import Grupo4.Sistema.AgroTech.Repositorios.IncidenciaRepository;
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.IIncidenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
 public class IncidenciaServiceImpl implements IIncidenciaService {
 
     @Autowired
-    private IncidenciaRepository repository;
+    private IncidenciaRepository incidenciaRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    public Page<Incidencia> obtenerTodosPaginados(Pageable pegeable) {
+        return null;
+    }
+
+    @Override
     public List<Incidencia> listarTodas() {
-        return repository.findAll();
+        return incidenciaRepository.findAllByOrderByIdDesc();
     }
 
     @Override
-    @Transactional
-    public void guardar(Incidencia incidencia) {
-        repository.save(incidencia);
+    public List<Incidencia> obtenerTodas() {
+        return List.of();
     }
 
     @Override
-    @Transactional
+    public Incidencia guardar(Incidencia incidencia) {
+        return incidenciaRepository.save(incidencia);
+    }
+
+    @Override
+    public void eliminarPorId(Integer id) {
+
+    }
+
+    @Override
+    public Incidencia obtenerPorId(Long id) {
+        return incidenciaRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Incidencia> obtenerPorMaquina(Long maquinaId) {
+        return List.of();
+    }
+
+    @Override
     public void eliminar(Long id) {
-        repository.deleteById(id);
+        incidenciaRepository.deleteById(id);
+    }
+
+    @Override
+    public void eliminarPorId(Long id) {
+
+    }
+
+    @Override
+    public Incidencia registrarIncidencia(Incidencia incidencia) {
+        return null;
+    }
+
+    @Override
+    public List<Incidencia> obtenerHistorialPorMaquina(Long maquinaId) {
+        return List.of();
     }
 }

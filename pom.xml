@@ -9,8 +9,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
+<<<<<<< HEAD
+		<version>3.2.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
+=======
 		<version>4.1.0</version>
 		<relativePath/>
+>>>>>>> feature/HU-SCRUM-11
 	</parent>
 
 	<groupId>Grupo4</groupId>
@@ -22,9 +27,19 @@
 
 	<properties>
 		<java.version>21</java.version>
+<<<<<<< HEAD
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
+=======
+>>>>>>> feature/HU-SCRUM-11
 	</properties>
 
 	<dependencies>
+		<!-- Spring Boot Starter Security (Añadido para resolver el error) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 
 		<!-- WEB -->
 		<dependency>
@@ -44,13 +59,21 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
+<<<<<<< HEAD
+		<!-- Thymeleaf Layout Dialect -->
+=======
 		<!-- THYMELEAF LAYOUT -->
+>>>>>>> feature/HU-SCRUM-11
 		<dependency>
 			<groupId>nz.net.ultraq.thymeleaf</groupId>
 			<artifactId>thymeleaf-layout-dialect</artifactId>
 		</dependency>
 
+<<<<<<< HEAD
+		<!-- Spring Boot Validation -->
+=======
 		<!-- VALIDATION -->
+>>>>>>> feature/HU-SCRUM-11
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
@@ -77,6 +100,9 @@
 			<scope>runtime</scope>
 		</dependency>
 
+<<<<<<< HEAD
+		<!-- Testing -->
+=======
 		<!-- SQL SERVER -->
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
@@ -85,12 +111,16 @@
 		</dependency>
 
 		<!-- TEST -->
+>>>>>>> feature/HU-SCRUM-11
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<<<<<<< HEAD
+=======
 
+>>>>>>> feature/HU-SCRUM-11
 	</dependencies>
 
 	<build>
@@ -100,7 +130,18 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+<<<<<<< HEAD
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>21</source>
+					<target>21</target>
+				</configuration>
+			</plugin>
+=======
 
+>>>>>>> feature/HU-SCRUM-11
 		</plugins>
 	</build>
 

@@ -1,8 +1,12 @@
 package Grupo4.Sistema.AgroTech.Controladores;
 
 import Grupo4.Sistema.AgroTech.Model.TipoMantenimiento;
+<<<<<<< HEAD
+import Grupo4.Sistema.AgroTech.Repositorios.TipoMantenimientoRepository;
+=======
 import Grupo4.Sistema.AgroTech.Servicios.Interfaces.ITipoMantenimientoService;
 import jakarta.validation.Valid;
+>>>>>>> feature/HU-SCRUM-11
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +19,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TipoMantenimientoController {
 
     @Autowired
-    private ITipoMantenimientoService tipoMantenimientoService;
+    private TipoMantenimientoRepository repository;
 
+<<<<<<< HEAD
+    @GetMapping({"", "/"})
+    public String listar(Model model) {
+        model.addAttribute("lista", repository.findAll());
+=======
 
     @GetMapping
     public String listar(Model model) {
@@ -24,10 +33,25 @@ public class TipoMantenimientoController {
             model.addAttribute("tipoMantenimiento", new TipoMantenimiento());
         }
         model.addAttribute("lista", tipoMantenimientoService.listarTodos());
+>>>>>>> feature/HU-SCRUM-11
         return "tipomantenimiento";
     }
 
     @PostMapping("/guardar")
+<<<<<<< HEAD
+    public String guardar(@ModelAttribute TipoMantenimiento tipoMantenimiento, RedirectAttributes redirectAttributes) {
+        repository.save(tipoMantenimiento);
+        redirectAttributes.addFlashAttribute("mensaje", "Tipo de mantenimiento guardado correctamente.");
+        redirectAttributes.addFlashAttribute("tipoMensaje", "success");
+        return "redirect:/tipomantenimiento";
+    }
+
+    @GetMapping("/eliminar/{id}")
+    public String eliminar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        repository.deleteById(id);
+        redirectAttributes.addFlashAttribute("mensaje", "Registro eliminado correctamente.");
+        redirectAttributes.addFlashAttribute("tipoMensaje", "success");
+=======
     public String guardar(@Valid @ModelAttribute("tipoMantenimiento") TipoMantenimiento tipoMantenimiento,
                           BindingResult result,
                           RedirectAttributes redirectAttrs) {
@@ -100,6 +124,7 @@ public class TipoMantenimientoController {
         tipoMantenimientoService.eliminar(id);
         redirectAttrs.addFlashAttribute("mensaje", "Tipo de mantenimiento eliminado correctamente");
         redirectAttrs.addFlashAttribute("tipoMensaje", "danger");
+>>>>>>> feature/HU-SCRUM-11
         return "redirect:/tipomantenimiento";
     }
 }

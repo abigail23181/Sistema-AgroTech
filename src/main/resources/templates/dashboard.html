@@ -1,7 +1,12 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+=======
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org">
 
+>>>>>>> feature/HU-SCRUM-11
 <head>
     <meta charset="UTF-8">
     <title>Bienvenidos A Nuestro Sistema-AgroTech</title>
@@ -13,6 +18,13 @@
           rel="stylesheet">
 
     <style>
+<<<<<<< HEAD
+        body { background-color: #f4f6f9; }
+        .sidebar { min-width: 260px; min-height: 100vh; background-color: #1e293b; color: #fff; }
+        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; }
+        .sidebar a:hover, .sidebar a.active { background-color: #334155; color: #fff; }
+        .card-stat { border-radius: 12px; border: 1px solid #e2e8f0; }
+=======
 
         body {
             background-color: #f4f6f9;
@@ -131,6 +143,7 @@
             font-weight: 600;
         }
 
+>>>>>>> feature/HU-SCRUM-11
     </style>
 </head>
 
@@ -155,6 +168,15 @@
         <!-- MENÚ -->
 
         <nav class="d-flex flex-column gap-1">
+<<<<<<< HEAD
+            <a th:href="@{/dashboard}" class="active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            <a th:href="@{/empresas}"><i class="bi bi-building me-2"></i> Empresas</a>
+            <a th:href="@{/maquinarias}"><i class="bi bi-truck me-2"></i> Maquinarias</a>
+            <a th:href="@{/alertas}"><i class="bi bi-bell me-2"></i> Alertas</a>
+            <a th:href="@{/incidencias}"><i class="bi bi-exclamation-triangle me-2"></i> Incidencias</a>
+            <a th:href="@{/tipomantenimiento}"><i class="bi bi-tools me-2"></i> Mantenimientos</a>
+            <a th:href="@{/usuarios}"><i class="bi bi-people-fill me-2"></i> Usuarios y Roles</a>
+=======
 
             <!-- DASHBOARD -->
 
@@ -211,6 +233,7 @@
                 Tipo Mantenimiento
             </a>
 
+>>>>>>> feature/HU-SCRUM-11
         </nav>
 
     </div>
@@ -247,6 +270,26 @@
 
 </div>
 
+<<<<<<< HEAD
+<!-- CONTENIDO PRINCIPAL -->
+<div class="flex-grow-1 p-4">
+
+    <!-- ENCABEZADO Y USUARIO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-success mb-0 d-flex align-items-center gap-2">
+            <i class="bi bi-tree-fill"></i> Panel de Control (Dashboard)
+        </h3>
+        <span class="badge bg-light text-dark border px-3 py-2 shadow-sm font-monospace">
+            <i class="bi bi-person-circle me-1 text-primary"></i>
+            <span th:text="${session.accesoLogueado != null ? session.accesoLogueado.email : (usuario != null ? usuario : 'admin@agrotech.com')}">admin@agrotech.com</span>
+        </span>
+    </div>
+
+    <!-- TARJETAS SUPERIORES DE ESTADÍSTICAS -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-primary border-4">
+=======
 
 <!-- =====================================================
      CONTENIDO PRINCIPAL
@@ -315,9 +358,14 @@
 
             <div class="card card-stat p-3 shadow-sm border-start border-primary border-4">
 
+>>>>>>> feature/HU-SCRUM-11
                 <div class="d-flex justify-content-between align-items-center">
 
                     <div>
+<<<<<<< HEAD
+                        <small class="text-muted fw-bold">EMPRESAS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalEmpresas != null ? totalEmpresas : 0}">0</h2>
+=======
 
                         <small class="text-muted fw-bold">
                             EMPRESAS
@@ -328,6 +376,7 @@
                             1
                         </h2>
 
+>>>>>>> feature/HU-SCRUM-11
                     </div>
 
                     <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3">
@@ -341,6 +390,10 @@
             </div>
 
         </div>
+<<<<<<< HEAD
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-warning border-4">
+=======
 
 
         <!-- MAQUINARIAS -->
@@ -349,9 +402,14 @@
 
             <div class="card card-stat p-3 shadow-sm border-start border-warning border-4">
 
+>>>>>>> feature/HU-SCRUM-11
                 <div class="d-flex justify-content-between align-items-center">
 
                     <div>
+<<<<<<< HEAD
+                        <small class="text-muted fw-bold">MAQUINARIAS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalMaquinarias != null ? totalMaquinarias : 0}">0</h2>
+=======
 
                         <small class="text-muted fw-bold">
                             MAQUINARIAS
@@ -362,6 +420,7 @@
                             1
                         </h2>
 
+>>>>>>> feature/HU-SCRUM-11
                     </div>
 
                     <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3">
@@ -375,6 +434,10 @@
             </div>
 
         </div>
+<<<<<<< HEAD
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-danger border-4">
+=======
 
 
         <!-- ALERTAS -->
@@ -383,9 +446,14 @@
 
             <div class="card card-stat p-3 shadow-sm border-start border-danger border-4">
 
+>>>>>>> feature/HU-SCRUM-11
                 <div class="d-flex justify-content-between align-items-center">
 
                     <div>
+<<<<<<< HEAD
+                        <small class="text-muted fw-bold">ALERTAS ACTIVAS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalAlertas != null ? totalAlertas : 0}">0</h2>
+=======
 
                         <small class="text-muted fw-bold">
                             ALERTAS ACTIVAS
@@ -396,6 +464,7 @@
                             1
                         </h2>
 
+>>>>>>> feature/HU-SCRUM-11
                     </div>
 
                     <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3">
@@ -409,6 +478,63 @@
             </div>
 
         </div>
+<<<<<<< HEAD
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-success border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">USUARIOS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalUsuarios != null ? totalUsuarios : 0}">0</h2>
+                    </div>
+                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3">
+                        <i class="bi bi-people fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE MÓDULOS AUTORIZADOS -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold text-dark mb-3">
+            <i class="bi bi-shield-lock-fill text-success me-2"></i> Módulos Autorizados para Rol:
+            <span class="text-success" th:text="${session.rol != null ? session.rol : 'Administrador'}">Administrador</span>
+        </h5>
+
+        <div class="row g-3" th:if="${modulos != null}">
+            <div class="col-md-6" th:each="modulo : ${modulos}">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary" th:text="${modulo}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3" th:if="${modulos == null}">
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Catálogo e inventario de maquinaria industrial</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Programación y calendario de mantenimiento preventivo</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Alertas y registro de órdenes de trabajo</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border rounded-3 bg-light d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    <span class="fw-semibold text-secondary">Gestión de usuarios y roles</span>
+                </div>
+=======
 
     </div>
 
@@ -438,6 +564,7 @@
 
                 </p>
 
+>>>>>>> feature/HU-SCRUM-11
             </div>
 
 
@@ -454,6 +581,50 @@
 
     </div>
 
+<<<<<<< HEAD
+    <!-- TARJETAS DE ACCESO DIRECTO A MÓDULOS -->
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-truck text-success fs-1 mb-2"></i>
+                <h5 class="fw-bold">Inventario Maquinaria</h5>
+                <p class="text-muted small">Catálogo e inventario de maquinaria industrial.</p>
+                <a th:href="@{/maquinarias}" class="btn btn-outline-success rounded-pill mt-auto">Administrar</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-calendar-check text-info fs-1 mb-2"></i>
+                <h5 class="fw-bold">Mantenimiento Preventivo</h5>
+                <p class="text-muted small">Programación y calendario de mantenimiento.</p>
+                <a th:href="@{/tipomantenimiento}" class="btn btn-outline-info rounded-pill mt-auto">Programar</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-exclamation-triangle text-danger fs-1 mb-2"></i>
+                <h5 class="fw-bold">Alertas e Incidencias</h5>
+                <p class="text-muted small">Alertas y órdenes por imprevistos o correctivos.</p>
+                <a th:href="@{/incidencias}" class="btn btn-outline-danger rounded-pill mt-auto">Gestionar</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-people-fill text-primary fs-1 mb-2"></i>
+                <h5 class="fw-bold">Gestión de Usuarios</h5>
+                <p class="text-muted small">Administración de cuentas, técnicos y roles.</p>
+                <a th:href="@{/usuarios}" class="btn btn-outline-primary rounded-pill mt-auto">Administrar</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/bootstrap.bundle.min.js"></script>
+=======
 
     <!-- =================================================
          CALENDARIO DE MANTENIMIENTO
@@ -499,5 +670,6 @@
 
 </div>
 
+>>>>>>> feature/HU-SCRUM-11
 </body>
 </html>

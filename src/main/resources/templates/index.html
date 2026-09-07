@@ -1,102 +1,155 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/_mainLayout}">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Panel Principal - AgroTech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        .sidebar { min-width: 260px; min-height: 100vh; background-color: #1e293b; color: #fff; }
+        .sidebar a { color: #94a3b8; text-decoration: none; padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; }
+        .sidebar a:hover, .sidebar a.active { background-color: #334155; color: #fff; }
+        .card-stat { border-radius: 12px; border: 1px solid #e2e8f0; }
+    </style>
 </head>
-<body>
+<body class="d-flex">
 
-<div layout:fragment="content">
+<!-- SIDEBAR -->
+<div class="sidebar p-3 d-flex flex-column justify-content-between">
+    <div>
+        <h4 class="fw-bold text-white mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-tree-fill text-success"></i> AgroTech
+        </h4>
+        <nav class="d-flex flex-column gap-1">
+            <a th:href="@{/}" class="active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            <a th:href="@{/empresas}"><i class="bi bi-building me-2"></i> Empresas</a>
+            <a th:href="@{/maquinarias}"><i class="bi bi-truck me-2"></i> Maquinarias</a>
+            <a th:href="@{/alertas}"><i class="bi bi-bell me-2"></i> Alertas</a>
+            <a th:href="@{/incidencias}"><i class="bi bi-exclamation-triangle me-2"></i> Incidencias</a>
+            <a th:href="@{/tipomantenimiento}"><i class="bi bi-tools me-2"></i> Mantenimientos</a>
+            <a th:href="@{/usuarios}"><i class="bi bi-people-fill me-2"></i> Usuarios y Roles</a>
+        </nav>
+    </div>
 
-    <!-- Encabezado Principal -->
+    <!-- PERFIL Y CERRAR SESIÓN -->
+    <div class="pt-3 border-top border-secondary">
+        <a th:href="@{/perfil}" class="text-white mb-1"><i class="bi bi-person-circle me-2"></i> Ver Perfil</a>
+        <a th:href="@{/logout}" class="text-danger"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
+    </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="flex-grow-1 p-4">
+
+    <!-- ENCABEZADO -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold text-success m-0"><i class="bi bi-tree-fill me-2"></i>BIENVENIDOS A NUESTRO SISTEMA-AGROTECH</h2>
-        </div>
-        <button class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="location.reload();">
-        </button>
+        <h3 class="fw-bold text-success mb-0 d-flex align-items-center gap-2">
+            <i class="bi bi-tree-fill"></i> Panel de Control (Dashboard)
+        </h3>
+        <span class="badge bg-light text-dark border px-3 py-2 shadow-sm font-monospace">
+            <i class="bi bi-person-circle me-1 text-primary"></i>
+            <span th:text="${session.accesoLogueado != null ? session.accesoLogueado.email : 'admin@agrotech.com'}">admin@agrotech.com</span>
+        </span>
     </div>
 
-    <!-- TARJETAS DE MÉTRICAS (KPIs) CON RUTAS CORREGIDAS -->
+    <!-- TARJETAS SUPERIORES DE ESTADÍSTICAS (4 COLUMNAS) -->
     <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <a th:href="@{/empresas}" class="text-decoration-none">
-                <div class="card card-custom border-0 shadow-sm bg-white p-3 border-start border-primary border-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Empresas</h6>
-                            <h3 class="fw-bold text-dark mb-0" th:text="${empresas != null ? empresas.size() : 0}">0</h3>
-                        </div>
-                        <div class="rounded-3 bg-primary bg-opacity-10 p-3 text-primary">
-                            <i class="bi bi-building fs-3"></i>
-                        </div>
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-primary border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">EMPRESAS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalEmpresas != null ? totalEmpresas : 0}">0</h2>
+                    </div>
+                    <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3">
+                        <i class="bi bi-building fs-3"></i>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-        <div class="col-12 col-md-4">
-            <a th:href="@{/maquinaria}" class="text-decoration-none">
-                <div class="card card-custom border-0 shadow-sm bg-white p-3 border-start border-warning border-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Maquinarias</h6>
-                            <h3 class="fw-bold text-dark mb-0" th:text="${maquinarias != null ? maquinarias.size() : 0}">0</h3>
-                        </div>
-                        <div class="rounded-3 bg-warning bg-opacity-10 p-3 text-warning">
-                            <i class="bi bi-truck fs-3"></i>
-                        </div>
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-warning border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">MAQUINARIAS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalMaquinarias != null ? totalMaquinarias : 0}">0</h2>
+                    </div>
+                    <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3">
+                        <i class="bi bi-truck fs-3"></i>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-        <div class="col-12 col-md-4">
-            <a th:href="@{/alertas}" class="text-decoration-none">
-                <div class="card card-custom border-0 shadow-sm bg-white p-3 border-start border-danger border-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-muted mb-1 small text-uppercase fw-semibold">Alertas Activas</h6>
-                            <h3 class="fw-bold text-dark mb-0" th:text="${alertas != null ? alertas.size() : 0}">0</h3>
-                        </div>
-                        <div class="rounded-3 bg-danger bg-opacity-10 p-3 text-danger">
-                            <i class="bi bi-bell fs-3"></i>
-                        </div>
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-danger border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">ALERTAS ACTIVAS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalAlertas != null ? totalAlertas : 0}">0</h2>
+                    </div>
+                    <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3">
+                        <i class="bi bi-bell fs-3"></i>
                     </div>
                 </div>
-            </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat p-3 bg-white shadow-sm border-start border-success border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">USUARIOS</small>
+                        <h2 class="fw-bold mb-0" th:text="${totalUsuarios != null ? totalUsuarios : 0}">0</h2>
+                    </div>
+                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3">
+                        <i class="bi bi-people fs-3"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- ACCIONES RÁPIDAS PARA OTROS MÓDULOS -->
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="card card-custom shadow-sm p-4 text-center bg-white">
-                <i class="bi bi-bell text-danger fs-1 mb-2"></i>
-                <h6 class="fw-bold">Alertas del Sistema</h6>
-                <p class="text-muted small">Notificaciones y alertas programadas.</p>
-                <a th:href="@{/alertas}" class="btn btn-outline-danger btn-sm rounded-pill mt-1">Abrir Alertas</a>
+    <!-- TARJETAS DE ACCESO DIRECTO -->
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-truck text-success fs-1 mb-2"></i>
+                <h5 class="fw-bold">Inventario Maquinaria</h5>
+                <p class="text-muted small">Catálogo e inventario de maquinaria industrial.</p>
+                <a th:href="@{/maquinarias}" class="btn btn-outline-success rounded-pill mt-auto">Administrar</a>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-custom shadow-sm p-4 text-center bg-white">
-                <i class="bi bi-exclamation-triangle text-warning fs-1 mb-2"></i>
-                <h6 class="fw-bold">Incidencias</h6>
-                <p class="text-muted small">Historial de reportes y fallas.</p>
-                <a th:href="@{/incidencia/historial}" class="btn btn-outline-warning btn-sm rounded-pill mt-1">Ver Historial</a>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-calendar-check text-info fs-1 mb-2"></i>
+                <h5 class="fw-bold">Mantenimiento</h5>
+                <p class="text-muted small">Programación y calendario de mantenimiento.</p>
+                <a th:href="@{/tipomantenimiento}" class="btn btn-outline-info rounded-pill mt-auto">Programar</a>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-custom shadow-sm p-4 text-center bg-white">
-                <i class="bi bi-tools text-info fs-1 mb-2"></i>
-                <h6 class="fw-bold">Tipos de Mantenimiento</h6>
-                <p class="text-muted small">Ajuste de parámetros y categorías.</p>
-                <a th:href="@{/tipomantenimiento}" class="btn btn-outline-info btn-sm rounded-pill mt-1">Configurar</a>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-exclamation-triangle text-danger fs-1 mb-2"></i>
+                <h5 class="fw-bold">Alertas e Incidencias</h5>
+                <p class="text-muted small">Alertas y órdenes por imprevistos o correctivos.</p>
+                <a th:href="@{/incidencias}" class="btn btn-outline-danger rounded-pill mt-auto">Gestionar</a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
+                <i class="bi bi-people-fill text-primary fs-1 mb-2"></i>
+                <h5 class="fw-bold">Gestión de Usuarios</h5>
+                <p class="text-muted small">Administración de cuentas, técnicos y roles.</p>
+                <a th:href="@{/usuarios}" class="btn btn-outline-primary rounded-pill mt-auto">Administrar</a>
             </div>
         </div>
     </div>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/bootstrap.bundle.min.js"></script>
 </body>
 </html>
